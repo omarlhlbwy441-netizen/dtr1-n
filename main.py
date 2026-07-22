@@ -62,6 +62,14 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True, 'pool_recycle'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
+@app.after_request
+def add_cache_control_headers(response):
+    if request.path.startswith('/api/'):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
+
 # ═══════════════════════════════════════════════════════════════
 # SECTION 2: MODELS (same as before + notifications)
 # ═══════════════════════════════════════════════════════════════

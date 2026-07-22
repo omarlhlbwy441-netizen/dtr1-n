@@ -885,8 +885,9 @@ function openOrdersTab(){
 loadDashboard();
 loadNotifications();
 
-// Refresh notifications every 30 seconds
-setInterval(loadNotifications, 30000);
+// Live refresh every 3.5 seconds
+setInterval(loadDashboard, 3500);
+setInterval(loadNotifications, 10000);
 </script>
 </body>
 </html>
