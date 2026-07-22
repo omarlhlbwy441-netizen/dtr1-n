@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحباً بك في مملكة DTR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(1deg); }
+            66% { transform: translate(-20px, 20px) rotate(-1deg); }
+        }
+
+        /* Stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: var(--opacity);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--opacity); transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(0.5); }
+        }
+
+        /* Grid Lines */
+        .grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: 
+                linear-gradient(rgba(120, 119, 198, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(120, 119, 198, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Logo */
+        .logo-container {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            position: relative;
+        }
+
+        .logo-hex {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .logo-hex svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 30px rgba(120, 119, 198, 0.6));
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(120, 119, 198, 0.4) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.3; }
+        }
+
+        /* Title */
+        .title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #667eea 100%);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+            line-height: 1.2;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 300;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+        }
+
+        /* Description */
+        .description {
+            max-width: 600px;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 2;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3rem;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            position: relative;
+            padding: 1rem 2.5rem;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            width: 100%;
+            margin-top: 4rem;
+            padding: 0 1rem;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(120, 119, 198, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 4rem;
+            padding: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: rgba(120, 119, 198, 0.8);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #667eea;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 20px;
+            height: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            border-right: 2px solid rgba(255, 255, 255, 0.3);
+            transform: rotate(45deg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid"></div>
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <div class="logo-container">
+            <div class="logo-glow"></div>
+            <div class="logo">
+                <div class="logo-hex">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea"/>
+                                <stop offset="50%" style="stop-color:#764ba2"/>
+                                <stop offset="100%" style="stop-color:#f093fb"/>
+                            </linearGradient>
+                        </defs>
+                        <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" 
+                                 fill="none" stroke="url(#hexGrad)" stroke-width="2"/>
+                        <circle cx="50" cy="35" r="8" fill="url(#hexGrad)" opacity="0.8"/>
+                        <circle cx="35" cy="60" r="6" fill="url(#hexGrad)" opacity="0.6"/>
+                        <circle cx="65" cy="60" r="6" fill="url(#hexGrad)" opacity="0.6"/>
+                        <line x1="50" y1="35" x2="35" y2="60" stroke="url(#hexGrad)" stroke-width="1.5" opacity="0.7"/>
+                        <line x1="50" y1="35" x2="65" y2="60" stroke="url(#hexGrad)" stroke-width="1.5" opacity="0.7"/>
+                        <line x1="35" y1="60" x2="65" y2="60" stroke="url(#hexGrad)" stroke-width="1.5" opacity="0.7"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="title">مرحباً بك في مملكة DTR</h1>
+        <p class="subtitle">نظام ذاتي التطوير والتعلم الذكي</p>
+
+        <p class="description">
+            انطلق في رحلة إلى المستقبل مع أقوى نظام ذكاء اصطناعي متطور.
+            DTR-N يتعلم، يتطور، وينمو معك خطوة بخطوة نحو عالم رقمي لا حدود له.
+        </p>
+
+        <div class="buttons">
+            <a href="/app.html" class="btn btn-primary">
+                <span>🚀</span>
+                <span>ابدأ الرحلة</span>
+            </a>
+            <a href="/login" class="btn btn-secondary">
+                <span>🔐</span>
+                <span>تسجيل الدخول</span>
+            </a>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🧠</div>
+                <div class="feature-title">ذكاء متطور</div>
+                <div class="feature-desc">نظام يتعلم ذاتياً ويتطور مع كل تفاعل</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">سرعة فائقة</div>
+                <div class="feature-desc">استجابة فورية ومعالجة بيانات متقدمة</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-title">حماية آمنة</div>
+                <div class="feature-desc">تشفير متقدم وحماية كاملة للبيانات</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌐</div>
+                <div class="feature-title">عالم مفتوح</div>
+                <div class="feature-desc">تكامل مع GitHub والأنظمة العالمية</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>من بعد فضل الله — شكراً لمصر 🇪🇬</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="https://github.com/omarlhlbwy441-netizen/dtr1-n" target="_blank">GitHub</a> • 
+                <a href="/dashboard">لوحة التحكم</a>
+            </p>
+        </div>
+
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </div>
+
+    <script>
+        // Generate stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+            star.style.setProperty('--opacity', Math.random() * 0.8 + 0.2);
+            starsContainer.appendChild(star);
+        }
+
+        // Mouse parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            document.querySelector('.bg-animation::before')?.style?.setProperty('transform', 
+                `translate(${x}px, ${y}px)`);
+        });
+    </script>
+</body>
+</html>

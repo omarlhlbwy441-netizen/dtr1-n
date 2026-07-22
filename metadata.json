@@ -1,0 +1,6 @@
+{
+  "name": "dtr1-n (Rafeeq)",
+  "description": "Wolf Digital Kernel - The intelligent AI companion & digital ecosystem",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<title>لوحة التحكم | متاجر</title>
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — Mobile-First RTL Minimalist
+   ═══════════════════════════════════════════════ */
+:root{
+  --bg:#f8fafc;
+  --surface:#ffffff;
+  --text:#0f172a;
+  --text-secondary:#64748b;
+  --text-muted:#94a3b8;
+  --border:#e2e8f0;
+  --primary:#0ea5e9;
+  --primary-light:#e0f2fe;
+  --success:#10b981;
+  --success-light:#d1fae5;
+  --warning:#f59e0b;
+  --warning-light:#fef3c7;
+  --danger:#ef4444;
+  --danger-light:#fee2e2;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.04);
+  --shadow:0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg:0 12px 32px rgba(0,0,0,0.08);
+  --radius-sm:8px;
+  --radius:12px;
+  --radius-lg:16px;
+  --radius-xl:20px;
+  --header-h:56px;
+  --nav-h:64px;
+  --safe-top:env(safe-area-inset-top);
+  --safe-bottom:env(safe-area-inset-bottom);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.5;
+  min-height:100vh;
+  padding-top:calc(var(--header-h) + var(--safe-top));
+  padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 16px);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ═══════ TOP APP BAR ═══════ */
+.app-bar{
+  position:fixed;
+  top:0;right:0;left:0;
+  height:calc(var(--header-h) + var(--safe-top));
+  padding-top:var(--safe-top);
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding-right:16px;padding-left:16px;
+}
+.app-bar .brand{
+  font-size:1.1rem;
+  font-weight:800;
+  color:var(--primary);
+  letter-spacing:-0.5px;
+}
+.app-bar .greeting{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.app-bar .greeting-text{
+  font-size:0.8rem;
+  color:var(--text-secondary);
+  text-align:right;
+}
+.app-bar .greeting-text strong{
+  display:block;
+  font-size:0.95rem;
+  color:var(--text);
+  font-weight:600;
+}
+.app-bar .notif-btn{
+  position:relative;
+  width:40px;height:40px;
+  border-radius:50%;
+  border:none;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;
+  cursor:pointer;
+  transition:background 0.2s;
+}
+.app-bar .notif-btn:active{background:var(--border)}
+.app-bar .notif-badge{
+  position:absolute;
+  top:4px;right:4px;
+  width:18px;height:18px;
+  background:var(--danger);
+  color:#fff;
+  font-size:0.65rem;
+  font-weight:700;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--surface);
+}
+
+/* ═══════ NOTIFICATION PANEL ═══════ */
+.notif-panel{
+  position:fixed;
+  top:calc(var(--header-h) + var(--safe-top));
+  left:0;right:0;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow-lg);
+  z-index:999;
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.3s ease;
+}
+.notif-panel.open{max-height:60vh}
+.notif-panel .notif-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+}
+.notif-panel .notif-header h3{font-size:0.9rem;font-weight:600}
+.notif-panel .notif-header button{
+  background:none;border:none;color:var(--primary);font-size:0.8rem;cursor:pointer;font-weight:600;
+}
+.notif-list{max-height:50vh;overflow-y:auto;padding:8px 16px}
+.notif-item{
+  display:flex;gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread .notif-dot{background:var(--primary)}
+.notif-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--border);
+  flex-shrink:0;
+  margin-top:6px;
+}
+.notif-content{flex:1}
+.notif-content .notif-title{font-size:0.85rem;font-weight:600;margin-bottom:2px}
+.notif-content .notif-msg{font-size:0.8rem;color:var(--text-secondary);line-height:1.4}
+.notif-content .notif-time{font-size:0.7rem;color:var(--text-muted);margin-top:4px}
+.notif-empty{text-align:center;padding:32px;color:var(--text-muted);font-size:0.85rem}
+
+/* ═══════ MAIN CONTENT ═══════ */
+.container{padding:0 16px;max-width:100%}
+
+/* Page Title */
+.page-title{
+  font-size:1.4rem;
+  font-weight:800;
+  margin:16px 0 20px;
+  letter-spacing:-0.5px;
+}
+
+/* ═══════ SETUP PROGRESS ═══════ */
+.setup-section{
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);
+}
+.setup-section .section-label{
+  font-size:0.75rem;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:600;
+  margin-bottom:12px;
+}
+.setup-section h2{
+  font-size:1.1rem;
+  font-weight:700;
+  margin-bottom:16px;
+}
+.progress-bar{
+  height:8px;
+  background:var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),#38bdf8);
+  border-radius:4px;
+  transition:width 0.5s ease;
+}
+.progress-text{
+  font-size:0.8rem;
+  color:var(--text-secondary);
+  margin-bottom:16px;
+}
+.steps-list{display:flex;flex-direction:column;gap:12px}
+.step-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px;
+  border-radius:var(--radius);
+  background:var(--bg);
+  transition:all 0.2s;
+}
+.step-item.done{background:var(--success-light)}
+.step-item.done .step-num{background:var(--success);color:#fff}
+.step-item.current{background:var(--primary-light);border:1px solid rgba(14,165,233,0.2)}
+.step-num{
+  width:32px;height:32px;
+  border-radius:50%;
+  background:var(--border);
+  color:var(--text-muted);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;font-weight:700;
+  flex-shrink:0;
+}
+.step-info{flex:1}
+.step-info .step-name{font-size:0.9rem;font-weight:600;margin-bottom:2px}
+.step-info .step-desc{font-size:0.75rem;color:var(--text-secondary)}
+.step-action{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:0.75rem;
+  font-weight:600;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.step-action:active{opacity:0.8}
+
+/* ═══════ STATS CARDS ═══════ */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+.stat-card{
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  padding:16px 12px;
+  text-align:center;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);
+}
+.stat-card .stat-icon{
+  font-size:1.5rem;
+  margin-bottom:8px;
+}
+.stat-card .stat-value{
+  font-size:1.1rem;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:4px;
+}
+.stat-card .stat-label{
+  font-size:0.7rem;
+  color:var(--text-muted);
+  font-weight:500;
+}
+
+/* ═══════ QUICK TASKS ═══════ */
+.tasks-section{
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);
+}
+.tasks-section h2{
+  font-size:1rem;
+  font-weight:700;
+  margin-bottom:16px;
+}
+.task-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px;
+  border-radius:var(--radius);
+  background:var(--bg);
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:all 0.2s;
+  border:1px solid transparent;
+}
+.task-item:active{background:var(--border)}
+.task-item:hover{border-color:var(--border)}
+.task-item:last-child{margin-bottom:0}
+.task-icon{
+  width:40px;height:40px;
+  border-radius:var(--radius);
+  background:var(--primary-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;
+  flex-shrink:0;
+}
+.task-info{flex:1}
+.task-info .task-name{font-size:0.9rem;font-weight:600;margin-bottom:2px}
+.task-info .task-desc{font-size:0.75rem;color:var(--text-secondary)}
+.task-arrow{color:var(--text-muted);font-size:1.2rem}
+
+/* ═══════ SALES CHART ═══════ */
+.chart-section{
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);
+}
+.chart-section h2{
+  font-size:1rem;
+  font-weight:700;
+  margin-bottom:16px;
+}
+.chart-container{
+  height:180px;
+  position:relative;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:8px;
+  padding-bottom:28px;
+}
+.chart-bar-wrapper{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  height:100%;
+  justify-content:flex-end;
+}
+.chart-bar{
+  width:100%;
+  max-width:32px;
+  background:linear-gradient(180deg,var(--primary),#38bdf8);
+  border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+  transition:height 0.5s ease;
+  min-height:4px;
+}
+.chart-bar:hover{opacity:0.8}
+.chart-label{
+  font-size:0.65rem;
+  color:var(--text-muted);
+  position:absolute;
+  bottom:4px;
+  white-space:nowrap;
+}
+.chart-value{
+  font-size:0.65rem;
+  color:var(--text-secondary);
+  font-weight:600;
+}
+
+/* ═══════ BOTTOM NAV ═══════ */
+.bottom-nav{
+  position:fixed;
+  bottom:0;right:0;left:0;
+  height:calc(var(--nav-h) + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  z-index:1000;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding:8px 12px;
+  color:var(--text-muted);
+  text-decoration:none;
+  font-size:0.65rem;
+  font-weight:600;
+  transition:color 0.2s;
+  border:none;background:none;cursor:pointer;
+  flex:1;
+}
+.nav-item .nav-icon{font-size:1.3rem}
+.nav-item.active{color:var(--primary)}
+.nav-item.active .nav-icon{transform:scale(1.1)}
+
+/* ═══════ MODALS ═══════ */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:2000;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+}
+.modal-overlay.show{display:flex}
+.modal-sheet{
+  background:var(--surface);
+  border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  width:100%;
+  max-height:85vh;
+  overflow-y:auto;
+  padding:24px 20px calc(24px + var(--safe-bottom));
+  animation:slideUp 0.3s ease;
+}
+@keyframes slideUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+.modal-sheet h3{
+  font-size:1.1rem;
+  font-weight:700;
+  margin-bottom:20px;
+}
+.modal-close{
+  position:absolute;
+  top:16px;left:16px;
+  width:32px;height:32px;
+  border-radius:50%;
+  border:none;
+  background:var(--bg);
+  font-size:1.2rem;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ═══════ FORMS ═══════ */
+.form-group{margin-bottom:16px}
+.form-group label{
+  display:block;
+  font-size:0.8rem;
+  font-weight:600;
+  color:var(--text-secondary);
+  margin-bottom:6px;
+}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;
+  padding:12px 14px;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  background:var(--bg);
+  color:var(--text);
+  font-size:0.95rem;
+  font-family:inherit;
+  transition:border-color 0.2s;
+}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{
+  outline:none;
+  border-color:var(--primary);
+}
+.btn-primary-full{
+  width:100%;
+  padding:14px;
+  border-radius:var(--radius);
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  font-size:0.95rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:opacity 0.2s;
+}
+.btn-primary-full:active{opacity:0.8}
+
+/* ═══════ SKELETON LOADING ═══════ */
+.skeleton{
+  background:linear-gradient(90deg,var(--border) 25%,#f1f5f9 50%,var(--border) 75%);
+  background-size:200% 100%;
+  animation:skeleton 1.5s infinite;
+  border-radius:var(--radius-sm);
+}
+@keyframes skeleton{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+
+/* ═══════ RESPONSIVE ═══════ */
+@media(min-width:768px){
+  body{max-width:480px;margin:0 auto;border-right:1px solid var(--border);border-left:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP APP BAR ═══════ -->
+<header class="app-bar">
+  <div class="brand">متاجر</div>
+  <div class="greeting">
+    <div class="greeting-text">
+      مرحباً
+      <strong id="userName">...</strong>
+    </div>
+    <button class="notif-btn" onclick="toggleNotifPanel()">
+      🔔
+      <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════ NOTIFICATION PANEL ═══════ -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-header">
+    <h3>🔔 الإشعارات</h3>
+    <button onclick="markAllRead()">تحديد الكل كمقروء</button>
+  </div>
+  <div class="notif-list" id="notifList">
+    <div class="notif-empty">جاري التحميل...</div>
+  </div>
+</div>
+
+<!-- ═══════ MAIN CONTENT ═══════ -->
+<main class="container">
+  <h1 class="page-title">لوحة التحكم</h1>
+
+  <!-- Setup Progress -->
+  <section class="setup-section">
+    <div class="section-label">عملية إعداد المتجر</div>
+    <h2 id="setupTitle">إعداد المتجر</h2>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progressText">0% مكتمل</div>
+    <div class="steps-list" id="stepsList">
+      <div class="step-item skeleton" style="height:56px;border-radius:12px"></div>
+      <div class="step-item skeleton" style="height:56px;border-radius:12px"></div>
+      <div class="step-item skeleton" style="height:56px;border-radius:12px"></div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card">
+      <div class="stat-icon">💰</div>
+      <div class="stat-value" id="statSales">0</div>
+      <div class="stat-label">المبيعات اليوم</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📦</div>
+      <div class="stat-value" id="statOrders">0</div>
+      <div class="stat-label">طلبات جديدة</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">👁️</div>
+      <div class="stat-value" id="statViews">0</div>
+      <div class="stat-label">الزوار</div>
+    </div>
+  </div>
+
+  <!-- Quick Tasks -->
+  <section class="tasks-section">
+    <h2>⚡ الخطوات القادمة</h2>
+    <div id="tasksList">
+      <div class="task-item" onclick="openAddProductModal()">
+        <div class="task-icon">➕</div>
+        <div class="task-info">
+          <div class="task-name">إضافة منتجات</div>
+          <div class="task-desc">أضف منتجاتك الأولى للبدء في البيع</div>
+        </div>
+        <div class="task-arrow">‹</div>
+      </div>
+      <div class="task-item" onclick="window.location.href='/store/apply'">
+        <div class="task-icon">🎨</div>
+        <div class="task-info">
+          <div class="task-name">تخصيص المتجر</div>
+          <div class="task-desc">اختر شعار ولون متجرك</div>
+        </div>
+        <div class="task-arrow">‹</div>
+      </div>
+      <div class="task-item" onclick="openOrdersTab()">
+        <div class="task-icon">📋</div>
+        <div class="task-info">
+          <div class="task-name">مراجعة الطلبات</div>
+          <div class="task-desc">تابع طلبات العملاء الجديدة</div>
+        </div>
+        <div class="task-arrow">‹</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sales Chart -->
+  <section class="chart-section">
+    <h2>📈 تطور المبيعات</h2>
+    <div class="chart-container" id="salesChart">
+      <div class="chart-bar-wrapper">
+        <div class="chart-bar" style="height:30%"></div>
+        <span class="chart-label">السبت</span>
+      </div>
+      <div class="chart-bar-wrapper">
+        <div class="chart-bar" style="height:50%"></div>
+        <span class="chart-label">الأحد</span>
+      </div>
+      <div class="chart-bar-wrapper">
+        <div class="chart-bar" style="height:40%"></div>
+        <span class="chart-label">الإثنين</span>
+      </div>
+      <div class="chart-bar-wrapper">
+        <div class="chart-bar" style="height:70%"></div>
+        <span class="chart-label">الثلاثاء</span>
+      </div>
+      <div class="chart-bar-wrapper">
+        <div class="chart-bar" style="height:60%"></div>
+        <span class="chart-label">الأربعاء</span>
+      </div>
+      <div class="chart-bar-wrapper">
+        <div class="chart-bar" style="height:80%"></div>
+        <span class="chart-label">الخميس</span>
+      </div>
+      <div class="chart-bar-wrapper">
+        <div class="chart-bar" style="height:45%"></div>
+        <span class="chart-label">الجمعة</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ═══════ ADD PRODUCT MODAL ═══════ -->
+<div class="modal-overlay" id="addProductModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+    <h3>➕ إضافة منتج جديد</h3>
+    <form id="addProductForm">
+      <div class="form-group">
+        <label>اسم المنتج *</label>
+        <input type="text" name="product_name" required placeholder="مثال: قميص قطني">
+      </div>
+      <div class="form-group">
+        <label>الوصف</label>
+        <textarea name="description" rows="3" placeholder="وصف المنتج..."></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label>السعر *</label>
+          <input type="number" name="price" required min="0" step="0.01" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>الكمية</label>
+          <input type="number" name="stock" value="1" min="0" placeholder="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>الفئة</label>
+        <select name="category">
+          <option value="">اختر الفئة...</option>
+          <option value="electronics">إلكترونيات</option>
+          <option value="fashion">أزياء</option>
+          <option value="home">منزل</option>
+          <option value="beauty">جمال</option>
+          <option value="food">طعام</option>
+          <option value="other">أخرى</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-primary-full">حفظ المنتج</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════ BOTTOM NAV ═══════ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="navTo('home')">
+    <span class="nav-icon">🏠</span>
+    <span>الرئيسية</span>
+  </button>
+  <button class="nav-item" onclick="navTo('orders')">
+    <span class="nav-icon">📦</span>
+    <span>الطلبات</span>
+  </button>
+  <button class="nav-item" onclick="navTo('products')">
+    <span class="nav-icon">🛍️</span>
+    <span>المنتجات</span>
+  </button>
+  <button class="nav-item" onclick="navTo('store')">
+    <span class="nav-icon">🏪</span>
+    <span>المتجر</span>
+  </button>
+  <button class="nav-item" onclick="navTo('settings')">
+    <span class="nav-icon">⚙️</span>
+    <span>الإعدادات</span>
+  </button>
+</nav>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA & STATE
+// ═══════════════════════════════════════════════
+let dashboardData = null;
+let notificationsData = [];
+
+// ═══════════════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════════════
+let notifPanelOpen = false;
+function toggleNotifPanel(){
+  notifPanelOpen = !notifPanelOpen;
+  document.getElementById('notifPanel').classList.toggle('open', notifPanelOpen);
+  if(notifPanelOpen) loadNotifications();
+}
+
+async function loadNotifications(){
+  try{
+    const res = await fetch('/api/notifications?unread=false');
+    const data = await res.json();
+    notificationsData = data.notifications;
+    const list = document.getElementById('notifList');
+    if(!notificationsData.length){
+      list.innerHTML = '<div class="notif-empty">لا توجد إشعارات</div>';
+      return;
+    }
+    list.innerHTML = notificationsData.map(n => `
+      <div class="notif-item ${n.is_read?'':'unread'}" onclick="markRead(${n.id})">
+        <div class="notif-dot"></div>
+        <div class="notif-content">
+          <div class="notif-title">${n.title}</div>
+          <div class="notif-msg">${n.message}</div>
+          <div class="notif-time">${new Date(n.created_at).toLocaleDateString('ar-EG')}</div>
+        </div>
+      </div>
+    `).join('');
+    updateNotifBadge(data.unread_count);
+  }catch(e){console.error(e);}
+}
+
+function updateNotifBadge(count){
+  const badge = document.getElementById('notifBadge');
+  if(count > 0){
+    badge.style.display = 'flex';
+    badge.textContent = count > 99 ? '99+' : count;
+  }else{
+    badge.style.display = 'none';
+  }
+}
+
+async function markRead(id){
+  try{
+    await fetch('/api/notifications/'+id+'/read',{method:'POST'});
+    loadNotifications();
+  }catch(e){}
+}
+
+async function markAllRead(){
+  try{
+    await fetch('/api/notifications/read-all',{method:'POST'});
+    loadNotifications();
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD DATA
+// ═══════════════════════════════════════════════
+async function loadDashboard(){
+  try{
+    const res = await fetch('/api/store/merchant/dashboard');
+    const data = await res.json();
+    if(data.error){window.location.href='/store/apply';return;}
+    dashboardData = data;
+    renderDashboard(data);
+  }catch(e){console.error(e);}
+}
+
+function renderDashboard(data){
+  // User name
+  document.getElementById('userName').textContent = data.user.full_name;
+
+  // Setup progress
+  const pct = data.setup.percentage;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = pct+'% مكتمل — '+data.setup.progress+' من '+data.setup.total+' خطوات';
+
+  const stepsContainer = document.getElementById('stepsList');
+  stepsContainer.innerHTML = data.setup.steps.map((s,i) => `
+    <div class="step-item ${s.done?'done':(i===data.setup.progress?'current':'')}">
+      <div class="step-num">${s.done?'✓':(i+1)}</div>
+      <div class="step-info">
+        <div class="step-name">${s.name}</div>
+        <div class="step-desc">${s.done?'تم الإنجاز':'انقر للبدء'}</div>
+      </div>
+      ${!s.done && i===data.setup.progress?'<button class="step-action">ابدأ</button>':''}
+    </div>
+  `).join('');
+
+  // Stats
+  document.getElementById('statSales').textContent = data.stats.today_sales.toLocaleString();
+  document.getElementById('statOrders').textContent = data.stats.today_orders;
+  document.getElementById('statViews').textContent = data.stats.total_views.toLocaleString();
+
+  // Chart
+  if(data.chart && data.chart.length){
+    const maxVal = Math.max(...data.chart.map(c=>c.sales),1);
+    const chartContainer = document.getElementById('salesChart');
+    const days = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    chartContainer.innerHTML = data.chart.map((c,i) => {
+      const pct = Math.max((c.sales/maxVal)*100, 4);
+      const dayName = days[new Date(c.date).getDay()] || c.label;
+      return `
+        <div class="chart-bar-wrapper">
+          <span class="chart-value">${c.sales>0?c.sales.toLocaleString():''}</span>
+          <div class="chart-bar" style="height:${pct}%"></div>
+          <span class="chart-label">${dayName}</span>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════
+function openAddProductModal(){
+  document.getElementById('addProductModal').classList.add('show');
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('show');
+}
+
+document.getElementById('addProductForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target));
+  try{
+    const res = await fetch('/api/store/merchant/products',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    });
+    const result = await res.json();
+    if(result.success){
+      closeModal('addProductModal');
+      e.target.reset();
+      loadDashboard();
+      // Show success
+      alert('✅ تم إضافة المنتج بنجاح!');
+    }
+  }catch(e){console.error(e);}
+};
+
+// Close modal on backdrop click
+document.getElementById('addProductModal').onclick = (e) => {
+  if(e.target === e.currentTarget) closeModal('addProductModal');
+};
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function navTo(tab){
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  const routes = {
+    home: '/store/merchant',
+    orders: '/store/merchant#orders',
+    products: '/store/merchant#products',
+    store: '/store/merchant#store',
+    settings: '/store/merchant#settings'
+  };
+
+  if(tab !== 'home'){
+    // For now, show alert for unimplemented tabs
+    // In production, these would navigate to separate pages
+    alert('قريباً: ' + tab);
+    return;
+  }
+}
+
+function openOrdersTab(){
+  document.querySelectorAll('.nav-item')[1].click();
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadDashboard();
+loadNotifications();
+
+// Refresh notifications every 30 seconds
+setInterval(loadNotifications, 30000);
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: dtr1-n
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dtr1-n-db
+          property: connectionString
+
+databases:
+  - name: dtr1-n-db
+    plan: free
+    ipAllowList: []
