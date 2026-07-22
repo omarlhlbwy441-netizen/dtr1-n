@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>رفيق | منصة التجارة الذكية</title>
+<title>رفيق | المحرك الذكي للبحث عن المتاجر والمنتجات</title>
 <style>
 :root {
   --p: #0ea5e9;
@@ -14,6 +14,7 @@
   --card-border: rgba(255, 255, 255, 0.08);
   --text: #f8fafc;
   --muted: #94a3b8;
+  --input-bg: rgba(15, 23, 42, 0.85);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -31,9 +32,9 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(12px);
-  border-b: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
   padding: 12px 16px;
 }
 
@@ -110,9 +111,9 @@ body {
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 48px 16px 36px 16px;
+  padding: 40px 16px 28px 16px;
   text-align: center;
-  background: radial-gradient(circle at 50% 20%, rgba(14, 165, 233, 0.12), transparent 70%);
+  background: radial-gradient(circle at 50% 20%, rgba(14, 165, 233, 0.15), transparent 70%);
   border-bottom: 1px solid var(--card-border);
 }
 
@@ -122,80 +123,120 @@ body {
   gap: 6px;
   padding: 6px 14px;
   border-radius: 20px;
-  background: rgba(14, 165, 233, 0.1);
-  border: 1px solid rgba(14, 165, 233, 0.25);
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.3);
   color: #38bdf8;
   font-size: 0.78rem;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .hero h1 {
-  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-size: clamp(1.6rem, 4.5vw, 2.6rem);
   font-weight: 900;
   line-height: 1.25;
   background: linear-gradient(90deg, #ffffff, #cbd5e1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   max-width: 800px;
-  margin: 0 auto 12px auto;
+  margin: 0 auto 10px auto;
 }
 
 .hero p {
   color: var(--muted);
-  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-size: clamp(0.85rem, 2.2vw, 1rem);
   max-width: 600px;
-  margin: 0 auto 24px auto;
+  margin: 0 auto 20px auto;
   line-height: 1.5;
 }
 
-.hero-actions {
+/* Search Box Container */
+.search-wrapper {
+  max-width: 680px;
+  margin: 0 auto 16px auto;
+  position: relative;
+}
+
+.search-input-box {
   display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.25s ease;
-  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 46px;
-  cursor: pointer;
+  background: rgba(30, 41, 59, 0.95);
+  border: 2px solid rgba(14, 165, 233, 0.35);
+  border-radius: 16px;
+  padding: 4px 6px 4px 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
 }
 
-.btn-primary {
+.search-input-box:focus-within {
+  border-color: #38bdf8;
+  box-shadow: 0 12px 35px rgba(14, 165, 233, 0.3);
+  background: rgba(15, 23, 42, 0.98);
+}
+
+.search-icon {
+  font-size: 1.2rem;
+  margin-left: 10px;
+  color: var(--p);
+}
+
+.search-input {
+  flex: 1;
+  height: 48px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 16px; /* Prevents mobile zoom */
+  font-weight: 600;
+}
+
+.search-input::placeholder {
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Category Filter Pills */
+.categories-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 0;
+  max-width: 800px;
+  margin: 0 auto;
+  scrollbar-width: none;
+}
+
+.categories-bar::-webkit-scrollbar { display: none; }
+
+.cat-pill {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--card-border);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+}
+
+.cat-pill.active, .cat-pill:hover {
   background: linear-gradient(90deg, var(--p), var(--s));
   color: #fff;
-  box-shadow: 0 8px 25px rgba(14, 165, 233, 0.3);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(14, 165, 233, 0.45);
-}
-
-.btn-secondary {
-  background: rgba(30, 41, 59, 0.8);
-  color: #f1f5f9;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn-secondary:hover {
-  background: rgba(51, 65, 85, 0.9);
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
 }
 
 /* Main Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 16px;
+  padding: 24px 16px;
   width: 100%;
   flex: 1;
 }
@@ -204,11 +245,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .section-title {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -241,10 +282,67 @@ body {
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
+/* Stores Grid */
+.stores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+.store-card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 20px 16px;
+  text-align: center;
+  border: 1px solid var(--card-border);
+  transition: all 0.25s ease;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.store-card:hover {
+  border-color: rgba(14, 165, 233, 0.4);
+  transform: translateY(-3px);
+  background: rgba(30, 41, 59, 0.95);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+
+.store-card .icon {
+  font-size: 2.6rem;
+  margin-bottom: 8px;
+}
+
+.store-card h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.store-card p {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.store-badge {
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(14, 165, 233, 0.12);
+  color: #38bdf8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid rgba(14, 165, 233, 0.2);
+}
+
 /* Products Grid */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 16px;
   margin-bottom: 40px;
 }
@@ -267,12 +365,12 @@ body {
 }
 
 .product-image {
-  height: 160px;
+  height: 150px;
   background: linear-gradient(135deg, #1e293b, #0f172a);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3.5rem;
+  font-size: 3.2rem;
   position: relative;
 }
 
@@ -290,7 +388,7 @@ body {
 }
 
 .product-info {
-  padding: 16px;
+  padding: 14px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -298,17 +396,17 @@ body {
 }
 
 .product-info h3 {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
   margin-bottom: 6px;
   color: #f1f5f9;
 }
 
 .product-info .store-tag {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: #38bdf8;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .product-footer {
@@ -316,12 +414,12 @@ body {
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  pt: 10px;
+  padding-top: 10px;
   margin-top: auto;
 }
 
 .price {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: #f8fafc;
 }
@@ -334,78 +432,24 @@ body {
   border: none;
   font-size: 0.78rem;
   font-weight: 700;
-}
-
-/* Stores Grid */
-.stores-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
-  margin-bottom: 40px;
-}
-
-.store-card {
-  background: var(--card);
-  border-radius: 18px;
-  padding: 20px 16px;
-  text-align: center;
-  border: 1px solid var(--card-border);
-  transition: all 0.25s ease;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-
-.store-card:hover {
-  border-color: rgba(14, 165, 233, 0.4);
-  transform: translateY(-2px);
-  background: rgba(30, 41, 59, 0.9);
-}
-
-.store-card .icon {
-  font-size: 2.8rem;
-  margin-bottom: 8px;
-}
-
-.store-card h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.store-card p {
-  color: var(--muted);
-  font-size: 0.8rem;
+  cursor: pointer;
 }
 
 /* Footer */
 .footer {
   text-align: center;
-  padding: 28px 16px;
+  padding: 24px 16px;
   color: var(--muted);
   border-top: 1px solid var(--card-border);
   font-size: 0.82rem;
   background: rgba(15, 23, 42, 0.95);
 }
 
-/* Mobile responsive fixes */
 @media (max-width: 640px) {
-  .products-grid {
-    grid-template-columns: 1fr;
-  }
-  .stores-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .hero {
-    padding: 32px 14px 24px 14px;
-  }
-  .container {
-    padding: 20px 12px;
-  }
-  .btn {
-    width: 100%;
-    justify-content: center;
-  }
+  .products-grid { grid-template-columns: 1fr; }
+  .stores-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero { padding: 28px 12px 20px 12px; }
+  .container { padding: 16px 10px; }
 }
 </style>
 </head>
@@ -435,75 +479,75 @@ body {
   </div>
 </header>
 
-<!-- Hero Section -->
+<!-- Hero & Search Section -->
 <section class="hero">
   <div class="hero-badge">
-    ✨ منصة التجارة الذكية المباشرة
+    ⚡ المحرك الذكي الأقوى للبحث عن المتاجر والمنتجات
   </div>
-  <h1>منظومة تسويق إلكتروني متكاملة وربط مباشر مع قاعدة البيانات</h1>
-  <p>تصفح أرقى المتاجر المعتمدة أو تقدم بطلب الحصول على توكيل تجاري في ثوانٍ</p>
-  <div class="hero-actions">
-    <a href="/store/apply" class="btn btn-primary">🏪 تقدم بطلب توكيل تجاري</a>
-    <a href="#storesSection" class="btn btn-secondary">🛍️ تصفح المتاجر المعتمدة</a>
+  <h1>ابحث عن أفضل المتاجر المعتمدة والمنتجات المتاحة فوراً</h1>
+  <p>أدخل كلمة البحث للوصول المباشر إلى المتاجر، المنتجات، أو الأنشطة التجارية</p>
+
+  <!-- Live Search Bar -->
+  <div class="search-wrapper">
+    <div class="search-input-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم المتجر، المنتج، أو نوع النشاط التجاري..." oninput="filterContent()">
+    </div>
+  </div>
+
+  <!-- Category Pills -->
+  <div class="categories-bar">
+    <button class="cat-pill active" onclick="setCategory('all', this)">🌐 الكل</button>
+    <button class="cat-pill" onclick="setCategory('retail', this)">🛍️ تجزئة</button>
+    <button class="cat-pill" onclick="setCategory('wholesale', this)">📦 جملة</button>
+    <button class="cat-pill" onclick="setCategory('tech', this)">💻 إلكترونيات وتقنية</button>
+    <button class="cat-pill" onclick="setCategory('fashion', this)">👗 أزياء وموضة</button>
+    <button class="cat-pill" onclick="setCategory('food', this)">🍽️ مطاعم وأغذية</button>
   </div>
 </section>
 
 <!-- Main Content -->
 <main class="container">
-  <!-- Featured Products Section -->
-  <div class="section-header">
-    <h2 class="section-title">⭐ المنتجات المتاحة</h2>
+  <!-- Stores Section -->
+  <div class="section-header" id="storesSection">
+    <h2 class="section-title">🏪 المتاجر المعتمدة المتاحة (<span id="storesCount">0</span>)</h2>
     <div class="live-indicator">
       <div class="pulse-dot"></div>
-      تحديث تلقائي مفعّل
+      تحديث حي
     </div>
   </div>
 
-  <div class="products-grid" id="featuredProducts">
-    <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px">جاري تحميل المنتجات...</div>
-  </div>
-
-  <!-- Active Stores Section -->
-  <div class="section-header" id="storesSection">
-    <h2 class="section-title">🏪 المتاجر المعتمدة</h2>
-  </div>
-
   <div class="stores-grid" id="storesList">
-    <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px">جاري تحميل المتاجر...</div>
+    <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">جاري تحميل المتاجر...</div>
+  </div>
+
+  <!-- Featured Products Section -->
+  <div class="section-header">
+    <h2 class="section-title">⭐ المنتجات والخدمات المعروضة (<span id="productsCount">0</span>)</h2>
+  </div>
+
+  <div class="products-grid" id="featuredProducts">
+    <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">جاري تحميل المنتجات...</div>
   </div>
 </main>
 
 <footer class="footer">
-  <p>🏪 رفيق | منصة التجارة الذكية © 2026 — Wolf Digital Kernel v3.1</p>
+  <p>🏪 رفيق | المحرك الذكي لإدارة وبحث المتاجر © 2026 — Wolf Digital Kernel v3.2</p>
 </footer>
 
 <script>
-// Auto-polling live update every 3.5 seconds
+let allStoresData = [];
+let allProductsData = [];
+let activeCategory = 'all';
+
 async function loadLiveContent() {
   try {
     const storesRes = await fetch('/api/store/stores?_t=' + Date.now());
     if(!storesRes.ok) return;
-    const stores = await storesRes.json();
-    
-    // Update Stores UI
-    const storesContainer = document.getElementById('storesList');
-    if(!stores || !stores.length) {
-      storesContainer.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">لا توجد متاجر معتمدة حالياً</div>';
-    } else {
-      storesContainer.innerHTML = stores.map(s => `
-        <a href="/store/${s.slug}" class="store-card">
-          <div class="icon">🏪</div>
-          <h3>${escapeHtml(s.name)}</h3>
-          <p>${escapeHtml(s.type || 'تجارة عامة')}</p>
-        </a>
-      `).join('');
-    }
+    allStoresData = await storesRes.json();
 
-    // Fetch products from top stores
-    const productsContainer = document.getElementById('featuredProducts');
-    let allProducts = [];
-    
-    for(const store of stores.slice(0, 5)) {
+    let fetchedProducts = [];
+    for(const store of allStoresData) {
       try {
         const pres = await fetch('/api/store/store/' + store.slug + '?_t=' + Date.now());
         if(pres.ok) {
@@ -512,48 +556,109 @@ async function loadLiveContent() {
             pdata.products.forEach(p => { 
               p.store_name = store.name; 
               p.store_slug = store.slug; 
+              p.business_type = store.type;
             });
-            allProducts = allProducts.concat(pdata.products);
+            fetchedProducts = fetchedProducts.concat(pdata.products);
           }
         }
       } catch(e) {}
     }
-
-    if(!allProducts.length) {
-      productsContainer.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">لا توجد منتجات مضافة بعد</div>';
-    } else {
-      productsContainer.innerHTML = allProducts.slice(0, 10).map(p => `
-        <div class="product-card" onclick="window.location.href='/product/${p.slug}'">
-          <div class="product-image">
-            📦
-            ${p.old_price ? '<span class="product-badge">خصم</span>' : ''}
-          </div>
-          <div class="product-info">
-            <div>
-              <div class="store-tag">🏪 ${escapeHtml(p.store_name)}</div>
-              <h3>${escapeHtml(p.name)}</h3>
-            </div>
-            <div class="product-footer">
-              <div class="price">${Number(p.price).toLocaleString()} ج.م</div>
-              <button class="buy-btn">شراء الآن</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
+    allProductsData = fetchedProducts;
+    filterContent();
   } catch(err) {
-    console.error('Live content sync error:', err);
+    console.error('Live sync error:', err);
   }
+}
+
+function setCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterContent();
+}
+
+function filterContent() {
+  const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+
+  // Filter Stores
+  const filteredStores = allStoresData.filter(s => {
+    const matchesCat = (activeCategory === 'all' || s.type === activeCategory);
+    const matchesQuery = !query || 
+      (s.name && s.name.toLowerCase().includes(query)) || 
+      (s.type && s.type.toLowerCase().includes(query)) ||
+      (s.slug && s.slug.toLowerCase().includes(query));
+    return matchesCat && matchesQuery;
+  });
+
+  // Filter Products
+  const filteredProducts = allProductsData.filter(p => {
+    const matchesCat = (activeCategory === 'all' || p.business_type === activeCategory);
+    const matchesQuery = !query || 
+      (p.name && p.name.toLowerCase().includes(query)) || 
+      (p.description && p.description.toLowerCase().includes(query)) ||
+      (p.store_name && p.store_name.toLowerCase().includes(query));
+    return matchesCat && matchesQuery;
+  });
+
+  renderStores(filteredStores);
+  renderProducts(filteredProducts);
+}
+
+function renderStores(stores) {
+  const container = document.getElementById('storesList');
+  document.getElementById('storesCount').textContent = stores.length;
+
+  if(!stores || !stores.length) {
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">لا توجد متاجر تطابق بحثك</div>';
+    return;
+  }
+
+  container.innerHTML = stores.map(s => `
+    <a href="/store/${s.slug}" class="store-card">
+      <div class="icon">🏪</div>
+      <h3>${escapeHtml(s.name)}</h3>
+      <p>${escapeHtml(s.type || 'تجارة عامة')}</p>
+      <div class="store-badge">تصفح المتجر 🔗</div>
+    </a>
+  `).join('');
+}
+
+function renderProducts(products) {
+  const container = document.getElementById('featuredProducts');
+  document.getElementById('productsCount').textContent = products.length;
+
+  if(!products || !products.length) {
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:30px">لا توجد منتجات تطابق بحثك</div>';
+    return;
+  }
+
+  container.innerHTML = products.map(p => `
+    <div class="product-card" onclick="window.location.href='/product/${p.slug}'">
+      <div class="product-image">
+        📦
+        ${p.old_price ? '<span class="product-badge">خصم</span>' : ''}
+      </div>
+      <div class="product-info">
+        <div>
+          <div class="store-tag">🏪 ${escapeHtml(p.store_name)}</div>
+          <h3>${escapeHtml(p.name)}</h3>
+        </div>
+        <div class="product-footer">
+          <div class="price">${Number(p.price).toLocaleString()} ج.م</div>
+          <button class="buy-btn">شراء الآن</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
 function escapeHtml(str) {
   if(!str) return '';
-  return str.replace(/[&<>"']/g, function(m) {
+  return String(str).replace(/[&<>"']/g, function(m) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
   });
 }
 
-// Initial load + poll every 3.5 seconds
 loadLiveContent();
 setInterval(loadLiveContent, 3500);
 </script>
