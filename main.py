@@ -220,6 +220,93 @@ class Notification(db.Model):
     link = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Website(db.Model):
+    __tablename__ = 'websites'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    site_name = db.Column(db.String(200), nullable=False)
+    site_slug = db.Column(db.String(200), unique=True, nullable=False)
+    business_category = db.Column(db.String(100))
+    site_title = db.Column(db.String(200))
+    description = db.Column(db.Text)
+    logo_url = db.Column(db.String(500))
+    theme_color = db.Column(db.String(50), default="#0ea5e9")
+    accent_color = db.Column(db.String(50), default="#6366f1")
+    bg_style = db.Column(db.String(50), default="dark")
+    font_family = db.Column(db.String(50), default="sans-serif")
+    contact_email = db.Column(db.String(120))
+    contact_phone = db.Column(db.String(50))
+    contact_address = db.Column(db.String(200))
+    social_links = db.Column(db.Text)  # JSON
+    is_published = db.Column(db.Boolean, default=True)
+    views_count = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    user = db.relationship('User', backref='websites')
+
+class WebsitePage(db.Model):
+    __tablename__ = 'website_pages'
+    id = db.Column(db.Integer, primary_key=True)
+    website_id = db.Column(db.Integer, db.ForeignKey('websites.id'), nullable=False)
+    page_title = db.Column(db.String(200), nullable=False)
+    page_slug = db.Column(db.String(200), nullable=False)
+    is_home = db.Column(db.Boolean, default=False)
+    sections_data = db.Column(db.Text, nullable=False)  # JSON array of sections
+    display_order = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    website = db.relationship('Website', backref='pages')
+
+class WebsiteMessage(db.Model):
+    __tablename__ = 'website_messages'
+    id = db.Column(db.Integer, primary_key=True)
+    website_id = db.Column(db.Integer, db.ForeignKey('websites.id'), nullable=False)
+    sender_name = db.Column(db.String(100), nullable=False)
+    sender_email = db.Column(db.String(120), nullable=False)
+    sender_phone = db.Column(db.String(50))
+    subject = db.Column(db.String(200))
+    message = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    website = db.relationship('Website', backref='messages')
+
+class SocialPost(db.Model):
+    __tablename__ = 'social_posts'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    media_type = db.Column(db.String(50), default="text")
+    media_url = db.Column(db.String(500))
+    likes_count = db.Column(db.Integer, default=0)
+    comments_count = db.Column(db.Integer, default=0)
+    shares_count = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    user = db.relationship('User', backref='social_posts')
+
+class SocialLike(db.Model):
+    __tablename__ = 'social_likes'
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('social_posts.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class SocialComment(db.Model):
+    __tablename__ = 'social_comments'
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('social_posts.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    comment_text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user = db.relationship('User')
+
+class SocialFollower(db.Model):
+    __tablename__ = 'social_followers'
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 # ═══════════════════════════════════════════════════════════════
 # SECTION 3: JWT AUTH HELPERS
 # ═══════════════════════════════════════════════════════════════
@@ -946,6 +1033,531 @@ def product_public_page(slug):
 @admin_required
 def admin_stores_page():
     return render_template('store/admin.html')
+
+# ═══════════════════════════════════════════════════════════════
+# SECTION 10.5: WEBSITE BUILDER ROUTES & APIS
+# ═══════════════════════════════════════════════════════════════
+
+@app.route('/builder')
+@login_required_jwt
+def builder_dashboard_page():
+    return render_template('builder/dashboard.html')
+
+@app.route('/builder/editor/<slug>')
+@login_required_jwt
+def builder_editor_page(slug):
+    user = get_current_user()
+    site = Website.query.filter_by(site_slug=slug, user_id=user.id).first()
+    if not site:
+        abort(404)
+    return render_template('builder/editor.html', site_slug=slug)
+
+@app.route('/site/<site_slug>')
+def public_site_home(site_slug):
+    site = Website.query.filter_by(site_slug=site_slug, is_published=True).first()
+    if not site:
+        abort(404)
+    # Increment views
+    try:
+        site.views_count += 1
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+    return render_template('builder/public_site.html', site_slug=site_slug, page_slug='home')
+
+@app.route('/site/<site_slug>/<page_slug>')
+def public_site_page(site_slug, page_slug):
+    site = Website.query.filter_by(site_slug=site_slug, is_published=True).first()
+    if not site:
+        abort(404)
+    page = WebsitePage.query.filter_by(website_id=site.id, page_slug=page_slug).first()
+    if not page:
+        abort(404)
+    return render_template('builder/public_site.html', site_slug=site_slug, page_slug=page_slug)
+
+# ── API ENDPOINTS FOR BUILDER ──
+
+@app.route('/api/builder/websites', methods=['GET'])
+@login_required_jwt
+def api_get_user_websites():
+    user = get_current_user()
+    sites = Website.query.filter_by(user_id=user.id).order_by(Website.created_at.desc()).all()
+    res = []
+    for s in sites:
+        pages_count = WebsitePage.query.filter_by(website_id=s.id).count()
+        msgs_count = WebsiteMessage.query.filter_by(website_id=s.id, is_read=False).count()
+        res.append({
+            'id': s.id,
+            'site_name': s.site_name,
+            'site_slug': s.site_slug,
+            'business_category': s.business_category,
+            'site_title': s.site_title,
+            'description': s.description,
+            'theme_color': s.theme_color,
+            'accent_color': s.accent_color,
+            'is_published': s.is_published,
+            'views_count': s.views_count,
+            'pages_count': pages_count,
+            'unread_messages': msgs_count,
+            'created_at': s.created_at.isoformat() if s.created_at else None
+        })
+    return jsonify(res)
+
+@app.route('/api/builder/websites/create', methods=['POST'])
+@login_required_jwt
+def api_create_website():
+    user = get_current_user()
+    data = request.get_json() or {}
+    
+    site_name = (data.get('site_name') or '').strip()
+    category = (data.get('category') or 'corporate').strip()
+    
+    if not site_name:
+        return jsonify({'error': 'اسم الموقع مطلوب'}), 400
+        
+    # Generate unique slug
+    base_slug = re.sub(r'[^a-zA-Z0-9]', '', site_name.lower())
+    if not base_slug:
+        base_slug = "site-" + secrets.token_hex(3)
+    slug = base_slug
+    counter = 1
+    while Website.query.filter_by(site_slug=slug).first():
+        slug = f"{base_slug}-{counter}"
+        counter += 1
+        
+    # Pick color preset by category
+    category_presets = {
+        'corporate': {'theme': '#0ea5e9', 'accent': '#6366f1', 'icon': '🏢'},
+        'restaurant': {'theme': '#f59e0b', 'accent': '#ef4444', 'icon': '🍽️'},
+        'portfolio': {'theme': '#8b5cf6', 'accent': '#ec4899', 'icon': '🎨'},
+        'medical': {'theme': '#10b981', 'accent': '#06b6d4', 'icon': '🏥'},
+        'realestate': {'theme': '#3b82f6', 'accent': '#10b981', 'icon': '🏰'},
+    }
+    preset = category_presets.get(category, {'theme': '#0ea5e9', 'accent': '#6366f1', 'icon': '🌐'})
+    
+    website = Website(
+        user_id=user.id,
+        site_name=site_name,
+        site_slug=slug,
+        business_category=category,
+        site_title=site_name + " | الموقع الرسمي",
+        description=f"أهلاً بكم في الموقع الرسمي لـ {site_name}. نقدم أفضل الخدمات والحلول المتكاملة.",
+        theme_color=preset['theme'],
+        accent_color=preset['accent'],
+        contact_phone=data.get('phone', ''),
+        contact_email=user.email,
+        contact_address=data.get('address', 'القاهرة، مصر')
+    )
+    db.session.add(website)
+    db.session.flush()
+    
+    # Generate default home sections according to category
+    home_sections = [
+        {
+            "id": "hero_1",
+            "type": "hero",
+            "badge": "🚀 مرحباً بكم في موقعنا",
+            "title": f"أهلاً بك في {site_name}",
+            "subtitle": f"نقدم أرقى الخدمات والحلول الرقمية الذكية لتلبية جميع احتياجاتكم بابتكار وجودة استثنائية",
+            "primary_btn_text": "استكشف خدماتنا",
+            "primary_btn_link": "#services",
+            "secondary_btn_text": "تواصل معنا",
+            "secondary_btn_link": "#contact",
+            "image_emoji": preset['icon']
+        },
+        {
+            "id": "features_1",
+            "type": "features",
+            "title": "لماذا تختارنا؟",
+            "subtitle": "رؤية ثاقبة واحترافية متكاملة لتقديم الأفضل دائماً",
+            "items": [
+                {"icon": "⚡", "title": "سرعة وكفاءة عالية", "desc": "نضمن إنجاز كافة الخدمات بدقة متناهية وفي الوقت المحدد."},
+                {"icon": "🛡️", "title": "أمان وجودة مضمونة", "desc": "معايير موثوقة تلبي تطلعاتك وتتجاوز توقعاتك."},
+                {"icon": "💎", "title": "حلول مبتكرة", "desc": "نواكب أحدث التقنيات لتقديم قيمة حقيقية لأعمالك."},
+                {"icon": "🎧", "title": "دعم متواصل", "desc": "فريقنا المخصص متواجد للرد على كافة الاستفسارات."}
+            ]
+        },
+        {
+            "id": "services_1",
+            "type": "services",
+            "title": "خدماتنا وتخصصاتنا",
+            "subtitle": "باقة واسعة من الخدمات المتميزة المصممة لأجلك",
+            "items": [
+                {"icon": "🌟", "title": "استشارات وتطوير متكامل", "desc": "حلول مخصصة تضمن تحقيق أهدافك بكفاءة عالية."},
+                {"icon": "💼", "title": "إدارة وتنفيذ مشاريع", "desc": "خبرة واسعة في تخطيط وتنفيذ جميع مراحل المشروع."},
+                {"icon": "📊", "title": "متابعة وتحليلات دقيقة", "desc": "تقارير وأدوات ذكية لقياس وتطوير الأداء باستمرار."}
+            ]
+        },
+        {
+            "id": "stats_1",
+            "type": "stats",
+            "items": [
+                {"number": "+500", "label": "عميل واثق"},
+                {"number": "100%", "label": "رضا العملاء"},
+                {"number": "24/7", "label": "دعم فني"}
+            ]
+        },
+        {
+            "id": "testimonials_1",
+            "type": "testimonials",
+            "title": "ماذا يقول عملاؤنا؟",
+            "items": [
+                {"name": "محمد علي", "role": "عميل دائم", "text": "خدمة ممتازة واحترافية لا توصف، أنصح بالتعامل معهم بشدة!", "avatar": "👨‍💼"},
+                {"name": "فاطمة الزهراء", "role": "رائدة أعمال", "text": "الالتزام بالمواعيد والجودة العالية هما سر نجاح هذا الفريق الرائع.", "avatar": "👩‍💻"}
+            ]
+        },
+        {
+            "id": "contact_1",
+            "type": "contact",
+            "title": "تواصل معنا فوراً",
+            "subtitle": "أرسل لنا استفسارك وسيقوم فريقنا بالتواصل معك في أقرب وقت"
+        },
+        {
+            "id": "footer_1",
+            "type": "footer",
+            "text": f"جميع الحقوق محفوظة © {datetime.utcnow().year} — {site_name}"
+        }
+    ]
+    
+    home_page = WebsitePage(
+        website_id=website.id,
+        page_title="الرئيسية",
+        page_slug="home",
+        is_home=True,
+        sections_data=json.dumps(home_sections, ensure_ascii=False),
+        display_order=1
+    )
+    db.session.add(home_page)
+    db.session.commit()
+    
+    return jsonify({'success': True, 'slug': website.site_slug, 'id': website.id})
+
+@app.route('/api/builder/websites/<slug_or_id>', methods=['GET'])
+def api_get_website_details(slug_or_id):
+    if slug_or_id.isdigit():
+        site = Website.query.get(int(slug_or_id))
+    else:
+        site = Website.query.filter_by(site_slug=slug_or_id).first()
+        
+    if not site:
+        return jsonify({'error': 'الموقع غير موجود'}), 404
+        
+    pages = WebsitePage.query.filter_by(website_id=site.id).order_by(WebsitePage.display_order.asc()).all()
+    pages_data = []
+    for p in pages:
+        try:
+            sec = json.loads(p.sections_data)
+        except Exception:
+            sec = []
+        pages_data.append({
+            'id': p.id,
+            'page_title': p.page_title,
+            'page_slug': p.page_slug,
+            'is_home': p.is_home,
+            'sections_data': sec,
+            'display_order': p.display_order
+        })
+        
+    return jsonify({
+        'site': {
+            'id': site.id,
+            'site_name': site.site_name,
+            'site_slug': site.site_slug,
+            'business_category': site.business_category,
+            'site_title': site.site_title,
+            'description': site.description,
+            'logo_url': site.logo_url,
+            'theme_color': site.theme_color,
+            'accent_color': site.accent_color,
+            'bg_style': site.bg_style,
+            'font_family': site.font_family,
+            'contact_email': site.contact_email,
+            'contact_phone': site.contact_phone,
+            'contact_address': site.contact_address,
+            'social_links': json.loads(site.social_links) if site.social_links else {},
+            'is_published': site.is_published,
+            'views_count': site.views_count
+        },
+        'pages': pages_data
+    })
+
+@app.route('/api/builder/websites/<int:site_id>', methods=['PUT'])
+@login_required_jwt
+def api_update_website(site_id):
+    user = get_current_user()
+    site = Website.query.filter_by(id=site_id, user_id=user.id).first()
+    if not site:
+        return jsonify({'error': 'غير مصرح'}), 403
+        
+    data = request.get_json() or {}
+    if 'site_name' in data: site.site_name = data['site_name']
+    if 'site_title' in data: site.site_title = data['site_title']
+    if 'description' in data: site.description = data['description']
+    if 'logo_url' in data: site.logo_url = data['logo_url']
+    if 'theme_color' in data: site.theme_color = data['theme_color']
+    if 'accent_color' in data: site.accent_color = data['accent_color']
+    if 'bg_style' in data: site.bg_style = data['bg_style']
+    if 'font_family' in data: site.font_family = data['font_family']
+    if 'contact_email' in data: site.contact_email = data['contact_email']
+    if 'contact_phone' in data: site.contact_phone = data['contact_phone']
+    if 'contact_address' in data: site.contact_address = data['contact_address']
+    if 'social_links' in data: site.social_links = json.dumps(data['social_links'], ensure_ascii=False)
+    if 'is_published' in data: site.is_published = bool(data['is_published'])
+    
+    site.updated_at = datetime.utcnow()
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/builder/websites/<int:site_id>/pages/<int:page_id>', methods=['PUT'])
+@login_required_jwt
+def api_update_website_page(site_id, page_id):
+    user = get_current_user()
+    site = Website.query.filter_by(id=site_id, user_id=user.id).first()
+    if not site:
+        return jsonify({'error': 'غير مصرح'}), 403
+        
+    page = WebsitePage.query.filter_by(id=page_id, website_id=site.id).first()
+    if not page:
+        return jsonify({'error': 'الصفحة غير موجودة'}), 404
+        
+    data = request.get_json() or {}
+    if 'page_title' in data: page.page_title = data['page_title']
+    if 'page_slug' in data: page.page_slug = data['page_slug']
+    if 'sections_data' in data: 
+        page.sections_data = json.dumps(data['sections_data'], ensure_ascii=False)
+        
+    page.updated_at = datetime.utcnow()
+    site.updated_at = datetime.utcnow()
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/builder/websites/<int:site_id>', methods=['DELETE'])
+@login_required_jwt
+def api_delete_website(site_id):
+    user = get_current_user()
+    site = Website.query.filter_by(id=site_id, user_id=user.id).first()
+    if not site:
+        return jsonify({'error': 'الموقع غير موجود'}), 404
+        
+    WebsitePage.query.filter_by(website_id=site.id).delete()
+    WebsiteMessage.query.filter_by(website_id=site.id).delete()
+    db.session.delete(site)
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/site/<site_slug>/contact', methods=['POST'])
+def api_public_site_contact(site_slug):
+    site = Website.query.filter_by(site_slug=site_slug, is_published=True).first()
+    if not site:
+        return jsonify({'error': 'الموقع غير متاح'}), 404
+        
+    data = request.get_json() or {}
+    name = (data.get('name') or '').strip()
+    email = (data.get('email') or '').strip()
+    phone = (data.get('phone') or '').strip()
+    msg = (data.get('message') or '').strip()
+    
+    if not name or not msg:
+        return jsonify({'error': 'الاسم والرسالة حقول مطلوبة'}), 400
+        
+    message_obj = WebsiteMessage(
+        website_id=site.id,
+        sender_name=name,
+        sender_email=email,
+        sender_phone=phone,
+        subject=data.get('subject', 'طلب تواصل من الموقع'),
+        message=msg
+    )
+    db.session.add(message_obj)
+    
+    # Send notification to site owner
+    notif = Notification(
+        user_id=site.user_id,
+        title="رسالة تواصل جديدة",
+        message=f"وصلتك رسالة جديدة عبر موقعك '{site.site_name}' من: {name}",
+        type="info"
+    )
+    db.session.add(notif)
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'تم إرسال رسالتك بنجاح!'})
+
+# ═══════════════════════════════════════════════════════════════
+# SECTION 10.8: SOCIAL NETWORK (دولة الذئب الرقمية) ROUTES & APIS
+# ═══════════════════════════════════════════════════════════════
+
+@app.route('/social')
+@login_required_jwt
+def social_feed_page():
+    return render_template('social/feed.html')
+
+@app.route('/social/profile/<username>')
+@login_required_jwt
+def social_profile_page(username):
+    target_user = User.query.filter_by(username=username).first()
+    if not target_user:
+        abort(404)
+    return render_template('social/profile.html', target_user_id=target_user.id, target_username=target_user.username)
+
+@app.route('/api/social/posts', methods=['GET'])
+@login_required_jwt
+def api_get_social_posts():
+    user = get_current_user()
+    posts = SocialPost.query.order_by(SocialPost.created_at.desc()).limit(50).all()
+    
+    # Get user likes map
+    user_likes = set(l.post_id for l in SocialLike.query.filter_by(user_id=user.id).all())
+    
+    res = []
+    for p in posts:
+        author = User.query.get(p.user_id)
+        res.append({
+            'id': p.id,
+            'user_id': p.user_id,
+            'author_name': author.full_name or author.username if author else 'مستخدم',
+            'author_username': author.username if author else 'user',
+            'content': p.content,
+            'media_type': p.media_type,
+            'media_url': p.media_url,
+            'likes_count': p.likes_count,
+            'comments_count': p.comments_count,
+            'shares_count': p.shares_count,
+            'is_liked': p.id in user_likes,
+            'created_at': p.created_at.isoformat() if p.created_at else None
+        })
+    return jsonify(res)
+
+@app.route('/api/social/posts', methods=['POST'])
+@login_required_jwt
+def api_create_social_post():
+    user = get_current_user()
+    data = request.get_json() or {}
+    content = (data.get('content') or '').strip()
+    
+    if not content:
+        return jsonify({'error': 'محتوى المنشور لا يمكن أن يكون فارغاً'}), 400
+        
+    media_type = data.get('media_type', 'text')
+    media_url = data.get('media_url', '')
+    
+    post = SocialPost(
+        user_id=user.id,
+        content=content,
+        media_type=media_type,
+        media_url=media_url
+    )
+    db.session.add(post)
+    db.session.commit()
+    
+    return jsonify({'success': True, 'id': post.id})
+
+@app.route('/api/social/posts/<int:post_id>/like', methods=['POST'])
+@login_required_jwt
+def api_toggle_post_like(post_id):
+    user = get_current_user()
+    post = SocialPost.query.get(post_id)
+    if not post:
+        return jsonify({'error': 'المنشور غير موجود'}), 404
+        
+    existing = SocialLike.query.filter_by(post_id=post_id, user_id=user.id).first()
+    if existing:
+        db.session.delete(existing)
+        post.likes_count = max(0, post.likes_count - 1)
+        is_liked = False
+    else:
+        like = SocialLike(post_id=post_id, user_id=user.id)
+        db.session.add(like)
+        post.likes_count += 1
+        is_liked = True
+        
+        # Send notification to post author if different
+        if post.user_id != user.id:
+            notif = Notification(
+                user_id=post.user_id,
+                title="إعجاب جديد المنشور 🐺",
+                message=f"قام {user.full_name or user.username} بالإعجاب بـ منشورك في دولة الذئب الرقمية",
+                type="info"
+            )
+            db.session.add(notif)
+
+    db.session.commit()
+    return jsonify({'success': True, 'is_liked': is_liked, 'likes_count': post.likes_count})
+
+@app.route('/api/social/posts/<int:post_id>/comments', methods=['GET'])
+@login_required_jwt
+def api_get_post_comments(post_id):
+    comments = SocialComment.query.filter_by(post_id=post_id).order_by(SocialComment.created_at.asc()).all()
+    res = []
+    for c in comments:
+        u = c.user
+        res.append({
+            'id': c.id,
+            'user_id': c.user_id,
+            'author_name': u.full_name or u.username if u else 'مستخدم',
+            'author_username': u.username if u else 'user',
+            'comment_text': c.comment_text,
+            'created_at': c.created_at.isoformat() if c.created_at else None
+        })
+    return jsonify(res)
+
+@app.route('/api/social/posts/<int:post_id>/comments', methods=['POST'])
+@login_required_jwt
+def api_add_post_comment(post_id):
+    user = get_current_user()
+    post = SocialPost.query.get(post_id)
+    if not post:
+        return jsonify({'error': 'المنشور غير موجود'}), 404
+        
+    data = request.get_json() or {}
+    text = (data.get('comment_text') or '').strip()
+    if not text:
+        return jsonify({'error': 'التعليق لا يمكن أن يكون فارغاً'}), 400
+        
+    c = SocialComment(
+        post_id=post_id,
+        user_id=user.id,
+        comment_text=text
+    )
+    db.session.add(c)
+    post.comments_count += 1
+    
+    if post.user_id != user.id:
+        notif = Notification(
+            user_id=post.user_id,
+            title="تعليق جديد 💬",
+            message=f"علق {user.full_name or user.username} على منشورك: '{text[:40]}...'",
+            type="info"
+        )
+        db.session.add(notif)
+
+    db.session.commit()
+    return jsonify({'success': True, 'comments_count': post.comments_count})
+
+@app.route('/api/social/users/<int:user_id>/follow', methods=['POST'])
+@login_required_jwt
+def api_toggle_follow_user(user_id):
+    me = get_current_user()
+    if me.id == user_id:
+        return jsonify({'error': 'لا يمكنك متابعة نفسك'}), 400
+        
+    existing = SocialFollower.query.filter_by(follower_id=me.id, followed_id=user_id).first()
+    if existing:
+        db.session.delete(existing)
+        is_following = False
+    else:
+        sf = SocialFollower(follower_id=me.id, followed_id=user_id)
+        db.session.add(sf)
+        is_following = True
+        
+        notif = Notification(
+            user_id=user_id,
+            title="متابع جديد 🐺",
+            message=f"بدأ {me.full_name or me.username} بمتابعتك في دولة الذئب الرقمية",
+            type="info"
+        )
+        db.session.add(notif)
+        
+    db.session.commit()
+    return jsonify({'success': True, 'is_following': is_following})
 
 # ═══════════════════════════════════════════════════════════════
 # SECTION 11: ERROR HANDLERS

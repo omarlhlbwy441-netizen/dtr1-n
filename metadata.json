@@ -1,6 +1,6 @@
 {
-  "name": "dtr1-n (Rafeeq)",
-  "description": "Wolf Digital Kernel - The intelligent AI companion & digital ecosystem",
+  "name": "دولة الذئب الرقمية",
+  "description": "منظومة دولة الذئب الرقمية الشاملة - شبكة تواصل اجتماعي، وباني مواقع، ومتجر توكيلات ذكي",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

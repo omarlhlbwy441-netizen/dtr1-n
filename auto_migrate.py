@@ -460,12 +460,104 @@ class SchemaRegistry:
                 FieldDef(name="created_at", type=FieldType.DATETIME, default="now", nullable=False),
             ])
 
+        # ── 🌐 WEBSITE BUILDER MODELS ──
+        websites = ModelDef(name="websites", description="المواقع الإلكترونية المنشأة",
+            fields=[
+                FieldDef(name="id", type=FieldType.INTEGER, primary_key=True, auto_increment=True, nullable=False),
+                FieldDef(name="user_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="site_name", type=FieldType.STRING, length=200, nullable=False),
+                FieldDef(name="site_slug", type=FieldType.STRING, length=200, nullable=False, unique=True, index=True),
+                FieldDef(name="business_category", type=FieldType.STRING, length=100, nullable=True),
+                FieldDef(name="site_title", type=FieldType.STRING, length=200, nullable=True),
+                FieldDef(name="description", type=FieldType.TEXT, nullable=True),
+                FieldDef(name="logo_url", type=FieldType.STRING, length=500, nullable=True),
+                FieldDef(name="theme_color", type=FieldType.STRING, length=50, default="#0ea5e9", nullable=False),
+                FieldDef(name="accent_color", type=FieldType.STRING, length=50, default="#6366f1", nullable=False),
+                FieldDef(name="bg_style", type=FieldType.STRING, length=50, default="dark", nullable=False),
+                FieldDef(name="font_family", type=FieldType.STRING, length=50, default="sans-serif", nullable=False),
+                FieldDef(name="contact_email", type=FieldType.STRING, length=120, nullable=True),
+                FieldDef(name="contact_phone", type=FieldType.STRING, length=50, nullable=True),
+                FieldDef(name="contact_address", type=FieldType.STRING, length=200, nullable=True),
+                FieldDef(name="social_links", type=FieldType.TEXT, nullable=True),
+                FieldDef(name="is_published", type=FieldType.BOOLEAN, default=True, nullable=False),
+                FieldDef(name="views_count", type=FieldType.INTEGER, default=0, nullable=False),
+                FieldDef(name="created_at", type=FieldType.DATETIME, default="now", nullable=False),
+                FieldDef(name="updated_at", type=FieldType.DATETIME, default="now", nullable=False),
+            ])
+
+        website_pages = ModelDef(name="website_pages", description="صفحات الموقع الإلكتروني",
+            fields=[
+                FieldDef(name="id", type=FieldType.INTEGER, primary_key=True, auto_increment=True, nullable=False),
+                FieldDef(name="website_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="page_title", type=FieldType.STRING, length=200, nullable=False),
+                FieldDef(name="page_slug", type=FieldType.STRING, length=200, nullable=False),
+                FieldDef(name="is_home", type=FieldType.BOOLEAN, default=False, nullable=False),
+                FieldDef(name="sections_data", type=FieldType.TEXT, nullable=False),
+                FieldDef(name="display_order", type=FieldType.INTEGER, default=0, nullable=False),
+                FieldDef(name="created_at", type=FieldType.DATETIME, default="now", nullable=False),
+                FieldDef(name="updated_at", type=FieldType.DATETIME, default="now", nullable=False),
+            ])
+
+        website_messages = ModelDef(name="website_messages", description="رسائل التواصل بالموقع",
+            fields=[
+                FieldDef(name="id", type=FieldType.INTEGER, primary_key=True, auto_increment=True, nullable=False),
+                FieldDef(name="website_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="sender_name", type=FieldType.STRING, length=100, nullable=False),
+                FieldDef(name="sender_email", type=FieldType.STRING, length=120, nullable=False),
+                FieldDef(name="sender_phone", type=FieldType.STRING, length=50, nullable=True),
+                FieldDef(name="subject", type=FieldType.STRING, length=200, nullable=True),
+                FieldDef(name="message", type=FieldType.TEXT, nullable=False),
+                FieldDef(name="is_read", type=FieldType.BOOLEAN, default=False, nullable=False),
+                FieldDef(name="created_at", type=FieldType.DATETIME, default="now", nullable=False),
+            ])
+
+        # ── 🐺 SOCIAL NETWORK MODELS ──
+        social_posts = ModelDef(name="social_posts", description="منشورات التواصل الاجتماعي",
+            fields=[
+                FieldDef(name="id", type=FieldType.INTEGER, primary_key=True, auto_increment=True, nullable=False),
+                FieldDef(name="user_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="content", type=FieldType.TEXT, nullable=False),
+                FieldDef(name="media_type", type=FieldType.STRING, length=50, default="text", nullable=False),
+                FieldDef(name="media_url", type=FieldType.STRING, length=500, nullable=True),
+                FieldDef(name="likes_count", type=FieldType.INTEGER, default=0, nullable=False),
+                FieldDef(name="comments_count", type=FieldType.INTEGER, default=0, nullable=False),
+                FieldDef(name="shares_count", type=FieldType.INTEGER, default=0, nullable=False),
+                FieldDef(name="created_at", type=FieldType.DATETIME, default="now", nullable=False),
+                FieldDef(name="updated_at", type=FieldType.DATETIME, default="now", nullable=False),
+            ])
+
+        social_likes = ModelDef(name="social_likes", description="إعجابات المنشورات",
+            fields=[
+                FieldDef(name="id", type=FieldType.INTEGER, primary_key=True, auto_increment=True, nullable=False),
+                FieldDef(name="post_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="user_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="created_at", type=FieldType.DATETIME, default="now", nullable=False),
+            ])
+
+        social_comments = ModelDef(name="social_comments", description="تعليقات المنشورات",
+            fields=[
+                FieldDef(name="id", type=FieldType.INTEGER, primary_key=True, auto_increment=True, nullable=False),
+                FieldDef(name="post_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="user_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="comment_text", type=FieldType.TEXT, nullable=False),
+                FieldDef(name="created_at", type=FieldType.DATETIME, default="now", nullable=False),
+            ])
+
+        social_followers = ModelDef(name="social_followers", description="متابعات شبكة التواصل",
+            fields=[
+                FieldDef(name="id", type=FieldType.INTEGER, primary_key=True, auto_increment=True, nullable=False),
+                FieldDef(name="follower_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="followed_id", type=FieldType.INTEGER, nullable=False, index=True),
+                FieldDef(name="created_at", type=FieldType.DATETIME, default="now", nullable=False),
+            ])
+
         return SchemaDef(
-            version="3.1.0",
+            version="3.3.0",
             models=[users, sessions, activities, config,
                     store_applications, store_slots, store_products,
                     store_contracts, store_payments, store_orders,
-                    notifications]
+                    notifications, websites, website_pages, website_messages,
+                    social_posts, social_likes, social_comments, social_followers]
         )
 
 def auto_migrate():

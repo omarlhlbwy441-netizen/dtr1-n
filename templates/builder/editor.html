@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>المحرر والمرئي للمواقع | رفيق Studio</title>
+<style>
+:root {
+  --p: #0ea5e9;
+  --s: #6366f1;
+  --bg: #0b0f19;
+  --sidebar: #111827;
+  --panel: #1f2937;
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --text: #f9fafb;
+  --muted: #9ca3af;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editor-header {
+  height: 56px;
+  background: var(--sidebar);
+  border-bottom: 1px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.device-toggler {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0,0,0,0.4);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+}
+
+.device-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.device-btn.active {
+  background: var(--s);
+  color: #fff;
+}
+
+.editor-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.sidebar-panel {
+  width: 380px;
+  background: var(--sidebar);
+  border-left: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.tabs-nav {
+  display: flex;
+  border-bottom: 1px solid var(--panel-border);
+  background: rgba(0,0,0,0.2);
+}
+
+.tab-item {
+  flex: 1;
+  padding: 12px 6px;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-item.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.tab-content {
+  padding: 16px;
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; margin-bottom: 6px; font-size: 0.8rem; color: #d1d5db; font-weight: 600; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--panel);
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.section-item-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.section-item-card h4 {
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-mini {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-mini:hover { background: rgba(255, 255, 255, 0.2); }
+
+.preview-stage {
+  flex: 1;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.preview-frame.mobile {
+  width: 375px;
+  height: 720px;
+  border: 12px solid #1f2937;
+  border-radius: 36px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+}
+
+.btn-save {
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, var(--s), var(--p));
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.88rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-save:hover { filter: brightness(1.1); }
+
+@media (max-width: 850px) {
+  .editor-body { flex-direction: column; }
+  .sidebar-panel { width: 100%; height: 50%; }
+  .preview-stage { height: 50%; }
+}
+</style>
+</head>
+<body>
+
+<header class="editor-header">
+  <div class="header-title">
+    <a href="/builder" style="color:var(--muted);text-decoration:none;font-size:1.2rem">⬅️</a>
+    <span id="siteTitleDisplay">جاري التحميل...</span>
+  </div>
+
+  <div class="device-toggler">
+    <button class="device-btn active" onclick="setDevice('desktop', this)">🖥️ الشاشة الكاملة</button>
+    <button class="device-btn" onclick="setDevice('mobile', this)">📱 وضع الهاتف المحمول</button>
+  </div>
+
+  <div style="display:flex;gap:8px">
+    <a id="publicViewLink" href="#" target="_blank" class="device-btn" style="text-decoration:none;background:rgba(255,255,255,0.08);color:#fff">👁️ معاينة فورية</a>
+    <button class="btn-save" onclick="saveWebsiteData()">💾 حفظ التغييرات</button>
+  </div>
+</header>
+
+<div class="editor-body">
+  <!-- Sidebar Editor Controls -->
+  <aside class="sidebar-panel">
+    <nav class="tabs-nav">
+      <div class="tab-item active" onclick="switchTab('sectionsTab', this)">🧩 أقسام الصفحة</div>
+      <div class="tab-item" onclick="switchTab('settingsTab', this)">⚙️ الهوية والألوان</div>
+      <div class="tab-item" onclick="switchTab('contactTab', this)">📞 بيانات التواصل</div>
+    </nav>
+
+    <!-- TAB 1: SECTIONS EDITOR -->
+    <div class="tab-content active" id="sectionsTab">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="font-size:0.92rem;font-weight:800">الأقسام الحالية</h3>
+        <button class="btn-mini" style="background:var(--s)" onclick="showAddSectionModal()">+ إضافة قسم جديد</button>
+      </div>
+
+      <div id="sectionsListContainer">
+        <!-- Sections dynamically injected here -->
+      </div>
+    </div>
+
+    <!-- TAB 2: BRAND & THEME SETTINGS -->
+    <div class="tab-content" id="settingsTab">
+      <div class="form-group">
+        <label>اسم الموقع الإلكتروني</label>
+        <input type="text" id="settingSiteName" oninput="liveUpdateSettings()">
+      </div>
+      <div class="form-group">
+        <label>عنوان المتصفح (SEO Title)</label>
+        <input type="text" id="settingSiteTitle" oninput="liveUpdateSettings()">
+      </div>
+      <div class="form-group">
+        <label>الوصف المكتوب (Meta Description)</label>
+        <textarea id="settingDescription" rows="3" oninput="liveUpdateSettings()"></textarea>
+      </div>
+      <div class="form-group">
+        <label>اللون الرئيسي للموقع (Theme Color)</label>
+        <input type="color" id="settingThemeColor" onchange="liveUpdateSettings()" style="height:40px;padding:2px;cursor:pointer">
+      </div>
+      <div class="form-group">
+        <label>اللون المساعد (Accent Color)</label>
+        <input type="color" id="settingAccentColor" onchange="liveUpdateSettings()" style="height:40px;padding:2px;cursor:pointer">
+      </div>
+      <div class="form-group">
+        <label>نمط الخلفية</label>
+        <select id="settingBgStyle" onchange="liveUpdateSettings()">
+          <option value="dark">داكن عالي التباين (Dark Mode)</option>
+          <option value="light">أبيض ناصع (Light Mode)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- TAB 3: CONTACT & SOCIAL -->
+    <div class="tab-content" id="contactTab">
+      <div class="form-group">
+        <label>رقم الهاتف</label>
+        <input type="text" id="settingPhone" oninput="liveUpdateSettings()">
+      </div>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="settingEmail" oninput="liveUpdateSettings()">
+      </div>
+      <div class="form-group">
+        <label>العنوان الجغرافي</label>
+        <input type="text" id="settingAddress" oninput="liveUpdateSettings()">
+      </div>
+    </div>
+  </aside>
+
+  <!-- Live Canvas Preview -->
+  <main class="preview-stage">
+    <iframe class="preview-frame" id="previewIframe"></iframe>
+  </main>
+</div>
+
+<script>
+const siteSlug = "{{ site_slug }}";
+let siteData = null;
+let homePageData = null;
+let currentSections = [];
+
+function setDevice(type, btn) {
+  document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const iframe = document.getElementById('previewIframe');
+  if(type === 'mobile') {
+    iframe.classList.add('mobile');
+  } else {
+    iframe.classList.remove('mobile');
+  }
+}
+
+function switchTab(tabId, el) {
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+async function loadSite() {
+  try {
+    const res = await fetch('/api/builder/websites/' + siteSlug);
+    if(!res.ok) return;
+    const data = await res.json();
+    siteData = data.site;
+    const homePage = data.pages.find(p => p.is_home) || data.pages[0];
+    homePageData = homePage;
+    currentSections = homePage.sections_data || [];
+
+    document.getElementById('siteTitleDisplay').textContent = siteData.site_name;
+    document.getElementById('publicViewLink').href = '/site/' + siteSlug;
+
+    // Fill settings inputs
+    document.getElementById('settingSiteName').value = siteData.site_name || '';
+    document.getElementById('settingSiteTitle').value = siteData.site_title || '';
+    document.getElementById('settingDescription').value = siteData.description || '';
+    document.getElementById('settingThemeColor').value = siteData.theme_color || '#0ea5e9';
+    document.getElementById('settingAccentColor').value = siteData.accent_color || '#6366f1';
+    document.getElementById('settingBgStyle').value = siteData.bg_style || 'dark';
+    document.getElementById('settingPhone').value = siteData.contact_phone || '';
+    document.getElementById('settingEmail').value = siteData.contact_email || '';
+    document.getElementById('settingAddress').value = siteData.contact_address || '';
+
+    renderSectionsList();
+    updatePreviewIframe();
+  } catch(e) { console.error(e); }
+}
+
+function renderSectionsList() {
+  const container = document.getElementById('sectionsListContainer');
+  container.innerHTML = currentSections.map((sec, index) => {
+    return `
+      <div class="section-item-card">
+        <h4>
+          <span>${getSectionTitle(sec.type)}</span>
+          <div class="section-controls">
+            ${index > 0 ? `<button class="btn-mini" onclick="moveSection(${index}, -1)">⬆️</button>` : ''}
+            ${index < currentSections.length - 1 ? `<button class="btn-mini" onclick="moveSection(${index}, 1)">⬇️</button>` : ''}
+            <button class="btn-mini" style="background:rgba(239,68,68,0.3)" onclick="deleteSection(${index})">🗑️</button>
+          </div>
+        </h4>
+
+        ${renderSectionFields(sec, index)}
+      </div>
+    `;
+  }).join('');
+}
+
+function getSectionTitle(type) {
+  const titles = {
+    'hero': '🚀 الهيدر الرئيسي (Hero Banner)',
+    'features': '⚡ المميزات والتخصصات (Features)',
+    'services': '🛠️ قائمة الخدمات (Services)',
+    'stats': '📊 أرقام وإحصائيات (Stats)',
+    'testimonials': '💬 آراء العملاء (Testimonials)',
+    'contact': '📬 نموذج التواصل (Contact Form)',
+    'footer': '👣 الفوتر وحقوق الملكية (Footer)'
+  };
+  return titles[type] || 'قسم مخصص';
+}
+
+function renderSectionFields(sec, index) {
+  if(sec.type === 'hero') {
+    return `
+      <div class="form-group"><label>العنوان الرئيسي</label><input type="text" value="${escapeHtml(sec.title||'')}" oninput="updateSecField(${index}, 'title', this.value)"></div>
+      <div class="form-group"><label>العنوان الفرعي</label><input type="text" value="${escapeHtml(sec.subtitle||'')}" oninput="updateSecField(${index}, 'subtitle', this.value)"></div>
+      <div class="form-group"><label>نص الزر</label><input type="text" value="${escapeHtml(sec.primary_btn_text||'')}" oninput="updateSecField(${index}, 'primary_btn_text', this.value)"></div>
+    `;
+  } else if(sec.type === 'features' || sec.type === 'services') {
+    return `
+      <div class="form-group"><label>عنوان القسم</label><input type="text" value="${escapeHtml(sec.title||'')}" oninput="updateSecField(${index}, 'title', this.value)"></div>
+      <div class="form-group"><label>الوصف الفرعي</label><input type="text" value="${escapeHtml(sec.subtitle||'')}" oninput="updateSecField(${index}, 'subtitle', this.value)"></div>
+    `;
+  } else if(sec.type === 'contact') {
+    return `
+      <div class="form-group"><label>عنوان نموذج التواصل</label><input type="text" value="${escapeHtml(sec.title||'')}" oninput="updateSecField(${index}, 'title', this.value)"></div>
+    `;
+  } else if(sec.type === 'footer') {
+    return `
+      <div class="form-group"><label>نص حقوق الفوتر</label><input type="text" value="${escapeHtml(sec.text||'')}" oninput="updateSecField(${index}, 'text', this.value)"></div>
+    `;
+  }
+  return '';
+}
+
+function updateSecField(index, key, val) {
+  currentSections[index][key] = val;
+  updatePreviewIframe();
+}
+
+function moveSection(index, dir) {
+  const target = index + dir;
+  if(target < 0 || target >= currentSections.length) return;
+  const temp = currentSections[index];
+  currentSections[index] = currentSections[target];
+  currentSections[target] = temp;
+  renderSectionsList();
+  updatePreviewIframe();
+}
+
+function deleteSection(index) {
+  if(!confirm('هل أنت متاكد من حذف هذا القسم؟')) return;
+  currentSections.splice(index, 1);
+  renderSectionsList();
+  updatePreviewIframe();
+}
+
+function liveUpdateSettings() {
+  siteData.site_name = document.getElementById('settingSiteName').value;
+  siteData.site_title = document.getElementById('settingSiteTitle').value;
+  siteData.description = document.getElementById('settingDescription').value;
+  siteData.theme_color = document.getElementById('settingThemeColor').value;
+  siteData.accent_color = document.getElementById('settingAccentColor').value;
+  siteData.bg_style = document.getElementById('settingBgStyle').value;
+  siteData.contact_phone = document.getElementById('settingPhone').value;
+  siteData.contact_email = document.getElementById('settingEmail').value;
+  siteData.contact_address = document.getElementById('settingAddress').value;
+  updatePreviewIframe();
+}
+
+function updatePreviewIframe() {
+  const iframe = document.getElementById('previewIframe');
+  iframe.src = '/site/' + siteSlug + '?preview=1&_t=' + Date.now();
+}
+
+async function saveWebsiteData() {
+  const btn = document.querySelector('.btn-save');
+  btn.disabled = true;
+  btn.textContent = 'جاري الحفظ...';
+
+  try {
+    // 1. Update site metadata
+    await fetch('/api/builder/websites/' + siteData.id, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        site_name: siteData.site_name,
+        site_title: siteData.site_title,
+        description: siteData.description,
+        theme_color: siteData.theme_color,
+        accent_color: siteData.accent_color,
+        bg_style: siteData.bg_style,
+        contact_phone: siteData.contact_phone,
+        contact_email: siteData.contact_email,
+        contact_address: siteData.contact_address
+      })
+    });
+
+    // 2. Update home page sections
+    if(homePageData) {
+      await fetch(`/api/builder/websites/${siteData.id}/pages/${homePageData.id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          sections_data: currentSections
+        })
+      });
+    }
+
+    alert('✅ تم حفظ كافة التغييرات وإطلاقها بنجاح!');
+  } catch(e) {
+    alert('❌ حدث خطأ أثناء الحفظ');
+  }
+  btn.disabled = false;
+  btn.textContent = '💾 حفظ التغييرات';
+}
+
+function escapeHtml(str) {
+  if(!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+loadSite();
+</script>
+</body>
+</html>

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>شبكة دولة الذئب الرقمية | Wolf Social</title>
+<style>
+:root {
+  --p: #6366f1;
+  --s: #0ea5e9;
+  --g: #10b981;
+  --r: #ef4444;
+  --bg: #0b0f19;
+  --card: #111827;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #f9fafb;
+  --muted: #9ca3af;
+  --input-bg: #1f2937;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+body {
+  background: var(--bg);
+  background-image: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12), transparent 70%);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(17, 24, 39, 0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--card-border);
+  padding: 12px 16px;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-space {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--p), var(--s));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.4);
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.logo-space::after {
+  content: 'شعارك هنا';
+  position: absolute;
+  bottom: -16px;
+  font-size: 0.6rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #a5b4fc, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: #fff;
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.layout-grid {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 0 16px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+}
+
+/* SIDEBAR WIDGET */
+.sidebar-widget {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+}
+
+.profile-card-mini {
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--card-border);
+  margin-bottom: 16px;
+}
+
+.avatar-large {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), var(--s));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  margin: 0 auto 10px auto;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+.profile-card-mini h3 { font-size: 1.05rem; font-weight: 800; color: #fff; }
+.profile-card-mini p { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+.widget-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--muted);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trend-tag {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(31, 41, 55, 0.6);
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 6px;
+  border: 1px solid rgba(255,255,255,0.03);
+  transition: all 0.2s;
+}
+
+.trend-tag:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+}
+
+/* MAIN FEED AREA */
+.create-post-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 18px;
+  border: 1px solid var(--card-border);
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.create-post-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.post-input {
+  flex: 1;
+  background: var(--input-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 0.95rem;
+  resize: none;
+  min-height: 80px;
+}
+
+.post-input:focus {
+  outline: none;
+  border-color: var(--p);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+}
+
+.create-post-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--card-border);
+}
+
+.btn-post {
+  padding: 10px 22px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg, var(--p), var(--s));
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-post:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+/* FEED POST CARD */
+.post-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  margin-bottom: 18px;
+  transition: all 0.25s;
+}
+
+.post-card:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), var(--s));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.author-info h4 { font-size: 0.95rem; font-weight: 800; color: #fff; }
+.author-info p { font-size: 0.78rem; color: var(--muted); }
+
+.post-content {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: #f1f5f9;
+  margin-bottom: 16px;
+  white-space: pre-line;
+}
+
+.post-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--card-border);
+}
+
+.action-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(31, 41, 55, 0.6);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.action-btn:hover, .action-btn.active {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* COMMENTS SECTION */
+.comments-box {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--card-border);
+  display: none;
+}
+
+.comments-box.show { display: block; }
+
+.comment-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  background: rgba(31, 41, 55, 0.5);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.comment-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.comment-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--input-bg);
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 800px) {
+  .layout-grid { grid-template-columns: 1fr; }
+  .sidebar-widget { position: static; }
+}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+    <a href="/social" class="brand">
+      <div class="logo-space">🐺</div>
+      <div class="brand-title">دولة الذئب الرقمية</div>
+    </a>
+    
+    <div class="nav-links">
+      <a href="/social" class="nav-link active">🐺 المنشورات والتغذية</a>
+      <a href="/builder" class="nav-link">🌐 باني المواقع</a>
+      <a href="/store/merchant" class="nav-link">🏪 متاجر والتوكيلات</a>
+      <a href="/" class="nav-link">🏠 الرئيسية</a>
+    </div>
+  </div>
+</header>
+
+<main class="layout-grid">
+  <!-- Sidebar Profile & Trends -->
+  <aside class="sidebar-widget">
+    <div class="profile-card-mini">
+      <div class="avatar-large">🐺</div>
+      <h3>مواطن في دولة الذئب</h3>
+      <p>@wolf_citizen</p>
+    </div>
+
+    <div class="widget-title">🔥 الأكثر تداولاً في دولة الذئب</div>
+    <a href="#" class="trend-tag">#دولة_الذئب_الرقمية</a>
+    <a href="#" class="trend-tag">#التجارة_الالكترونية</a>
+    <a href="#" class="trend-tag">#باني_المواقع_الذكية</a>
+    <a href="#" class="trend-tag">#الذكاء_الاصطناعي</a>
+
+    <div class="widget-title" style="margin-top:20px">✨ روابط سريعة للمنظومة</div>
+    <a href="/builder" class="trend-tag" style="color:#38bdf8">🌐 استوديو بناء المواقع</a>
+    <a href="/store/merchant" class="trend-tag" style="color:#10b981">🏪 لوحة التجار والتوكيلات</a>
+    <a href="/store/apply" class="trend-tag" style="color:#fbbf24">📝 تقديم طلب توكيل جديد</a>
+  </aside>
+
+  <!-- Feed Area -->
+  <section class="feed-container">
+    <!-- Post Creator -->
+    <div class="create-post-card">
+      <div class="create-post-header">
+        <div class="author-avatar">🐺</div>
+        <textarea class="post-input" id="postContent" placeholder="بماذا تفكر اليوم في دولة الذئب الرقمية؟"></textarea>
+      </div>
+      <div class="create-post-actions">
+        <div style="font-size:0.85rem;color:var(--muted)">💬 منشور عام لجميع المواطنين</div>
+        <button class="btn-post" id="submitPostBtn" onclick="createPost()">نشر الآن 🚀</button>
+      </div>
+    </div>
+
+    <!-- Posts Feed List -->
+    <div id="postsList">
+      <div style="text-align:center;padding:40px;color:var(--muted)">جاري تحميل منشورات دولة الذئب الرقمية...</div>
+    </div>
+  </section>
+</main>
+
+<script>
+async function loadPosts() {
+  try {
+    const res = await fetch('/api/social/posts?_t=' + Date.now());
+    if(!res.ok) return;
+    const posts = await res.json();
+    const list = document.getElementById('postsList');
+
+    if(!posts || !posts.length) {
+      list.innerHTML = `
+        <div style="text-align:center;padding:50px;background:var(--card);border-radius:20px;border:1px dashed var(--card-border)">
+          <div style="font-size:3rem;margin-bottom:10px">🐺</div>
+          <h3 style="color:#fff;margin-bottom:6px">لا توجد منشورات حتى الآن</h3>
+          <p style="color:var(--muted);font-size:0.88rem">كن أول من يشارك أفكاره في دولة الذئب الرقمية!</p>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = posts.map(p => `
+      <div class="post-card" id="post-${p.id}">
+        <div class="post-header">
+          <div class="post-author">
+            <div class="author-avatar">👤</div>
+            <div class="author-info">
+              <h4>${escapeHtml(p.author_name)}</h4>
+              <p>@${escapeHtml(p.author_username)} • ${formatDate(p.created_at)}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-content">${escapeHtml(p.content)}</div>
+
+        <div class="post-actions-bar">
+          <button class="action-btn ${p.is_liked ? 'active' : ''}" onclick="toggleLike(${p.id})">
+            ❤️ <span id="like-count-${p.id}">${p.likes_count}</span> إعجاب
+          </button>
+          <button class="action-btn" onclick="toggleComments(${p.id})">
+            💬 <span id="comment-count-${p.id}">${p.comments_count}</span> تعليقات
+          </button>
+          <button class="action-btn" onclick="sharePost('${escapeHtml(p.content)}')">
+            🚀 مشاركة
+          </button>
+        </div>
+
+        <div class="comments-box" id="comments-box-${p.id}">
+          <div id="comments-list-${p.id}" style="margin-bottom:10px">
+            <div style="font-size:0.8rem;color:var(--muted)">جاري تحميل التعليقات...</div>
+          </div>
+          <div class="comment-input-row">
+            <input type="text" class="comment-input" id="comment-input-${p.id}" placeholder="اكتب تعليقك هنا...">
+            <button class="btn-post" style="padding:6px 14px;font-size:0.8rem" onclick="submitComment(${p.id})">تعليق</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function createPost() {
+  const content = document.getElementById('postContent').value.trim();
+  if(!content) return alert('الرجاء كتابة نص المنشور');
+
+  const btn = document.getElementById('submitPostBtn');
+  btn.disabled = true;
+  btn.textContent = 'جاري النشر...';
+
+  try {
+    const res = await fetch('/api/social/posts', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ content })
+    });
+    const data = await res.json();
+    if(data.success) {
+      document.getElementById('postContent').value = '';
+      loadPosts();
+    } else {
+      alert('❌ ' + (data.error || 'حدث خطأ أثناء النشر'));
+    }
+  } catch(e) {
+    alert('❌ تعذر الاتصال بالسيرفر');
+  }
+  btn.disabled = false;
+  btn.textContent = 'نشر الآن 🚀';
+}
+
+async function toggleLike(postId) {
+  try {
+    const res = await fetch(`/api/social/posts/${postId}/like`, { method: 'POST' });
+    const data = await res.json();
+    if(data.success) {
+      const btn = document.querySelector(`#post-${postId} .action-btn`);
+      if(data.is_liked) btn.classList.add('active');
+      else btn.classList.remove('active');
+      document.getElementById(`like-count-${postId}`).textContent = data.likes_count;
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function toggleComments(postId) {
+  const box = document.getElementById(`comments-box-${postId}`);
+  box.classList.toggle('show');
+  if(box.classList.contains('show')) {
+    loadComments(postId);
+  }
+}
+
+async function loadComments(postId) {
+  try {
+    const res = await fetch(`/api/social/posts/${postId}/comments`);
+    if(!res.ok) return;
+    const comments = await res.json();
+    const list = document.getElementById(`comments-list-${postId}`);
+    
+    if(!comments || !comments.length) {
+      list.innerHTML = '<div style="font-size:0.8rem;color:var(--muted)">لا توجد تعليقات بعد، كن أول المعلقين!</div>';
+      return;
+    }
+
+    list.innerHTML = comments.map(c => `
+      <div class="comment-item">
+        <div style="font-size:1.1rem">💬</div>
+        <div>
+          <div style="font-size:0.82rem;font-weight:800;color:#38bdf8">${escapeHtml(c.author_name)}</div>
+          <div style="font-size:0.85rem;color:#f1f5f9">${escapeHtml(c.comment_text)}</div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function submitComment(postId) {
+  const input = document.getElementById(`comment-input-${postId}`);
+  const text = input.value.trim();
+  if(!text) return;
+
+  try {
+    const res = await fetch(`/api/social/posts/${postId}/comments`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ comment_text: text })
+    });
+    const data = await res.json();
+    if(data.success) {
+      input.value = '';
+      document.getElementById(`comment-count-${postId}`).textContent = data.comments_count;
+      loadComments(postId);
+    }
+  } catch(e) { console.error(e); }
+}
+
+function sharePost(text) {
+  if (navigator.share) {
+    navigator.share({
+      title: 'دولة الذئب الرقمية',
+      text: text,
+      url: window.location.href,
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text);
+    alert('📋 تم نسخ محتوى المنشور إلى الحافظة!');
+  }
+}
+
+function formatDate(isoStr) {
+  if(!isoStr) return '';
+  const d = new Date(isoStr);
+  return d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeHtml(str) {
+  if(!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+loadPosts();
+setInterval(loadPosts, 5000);
+</script>
+</body>
+</html>

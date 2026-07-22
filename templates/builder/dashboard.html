@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>باني المواقع الإلكترونية | رفيق</title>
+<style>
+:root {
+  --p: #0ea5e9;
+  --s: #6366f1;
+  --g: #10b981;
+  --r: #ef4444;
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --input-bg: rgba(15, 23, 42, 0.85);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+body {
+  background: var(--bg);
+  background-image: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--card-border);
+  padding: 12px 16px;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, var(--s), var(--p));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #818cf8, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: #fff;
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  width: 100%;
+  flex: 1;
+}
+
+.header-banner {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 28px 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--card-border);
+  text-align: center;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.header-banner h1 {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 900;
+  background: linear-gradient(90deg, #818cf8, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+.header-banner p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 650px;
+  margin: 0 auto 18px auto;
+}
+
+.btn-create {
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg, var(--s), var(--p));
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-create:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(99, 102, 241, 0.5);
+}
+
+.sites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.site-card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.site-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.35);
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.site-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(14, 165, 233, 0.2));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+}
+
+.site-info h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.site-info p {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.site-stats {
+  display: flex;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 12px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.site-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.site-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 41, 59, 0.8);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-action.edit {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #818cf8;
+}
+
+.btn-action.view {
+  background: rgba(14, 165, 233, 0.2);
+  border-color: rgba(14, 165, 233, 0.4);
+  color: #38bdf8;
+}
+
+.btn-action.delete {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  flex: 0 0 auto;
+}
+
+.btn-action:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.2);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal.show { display: flex; }
+
+.modal-content {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 520px;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.template-selector {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.template-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.template-card.active, .template-card:hover {
+  border-color: var(--s);
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.template-card .icon { font-size: 1.8rem; margin-bottom: 4px; }
+.template-card .title { font-size: 0.85rem; font-weight: 700; color: #fff; }
+
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; margin-bottom: 6px; font-size: 0.82rem; color: #cbd5e1; font-weight: 600; }
+.form-group input { width: 100%; height: 46px; padding: 0 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); background: var(--input-bg); color: #fff; font-size: 16px; }
+
+@media (max-width: 600px) {
+  body { padding: 10px 8px; }
+  .container { padding: 10px 8px; }
+  .template-selector { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+    <a href="/" class="brand">
+      <div class="brand-icon" style="background:linear-gradient(135deg, #6366f1, #0ea5e9);width:42px;height:42px;position:relative;border:1px solid rgba(255,255,255,0.2)" title="مساحة الشعار الرسمي">🐺</div>
+      <div class="brand-title">دولة الذئب | باني المواقع</div>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">🏠 الرئيسية</a>
+      <a href="/social" class="nav-link" style="color:#a5b4fc">🐺 التواصل الاجتماعي</a>
+      <a href="/builder" class="nav-link active">🌐 باني المواقع</a>
+      <a href="/store/merchant" class="nav-link">🏪 لوحة التجار والتوكيلات</a>
+      <a href="/store/apply" class="nav-link">📝 طلب توكيل</a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="header-banner">
+    <h1>🌐 استوديو بناء المواقع الإلكترونية الكاملة</h1>
+    <p>صمم، عدّل، وانشر موقعك الإلكتروني الاحترافي الجاهز للاستخدام خلال ثوانٍ معدودة وبسهولة تامة</p>
+    <button class="btn-create" onclick="openCreateModal()">🚀 أنشئ موقعك الإلكتروني الآن</button>
+  </div>
+
+  <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px">
+    📱 موقعك المنشأة (<span id="sitesCount">0</span>)
+  </h2>
+
+  <div class="sites-grid" id="sitesGrid">
+    <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px">جاري تحميل المواقع الإلكترونية...</div>
+  </div>
+</main>
+
+<!-- Create Website Modal -->
+<div class="modal" id="createModal">
+  <div class="modal-content">
+    <h3 style="font-size:1.15rem;font-weight:800;margin-bottom:6px">🚀 إنشاء موقع إلكتروني جديد</h3>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px">اختر قالب النشاط التجاري لتوليد الموقع بالكامل تلقائياً</p>
+    
+    <form id="createSiteForm">
+      <div class="form-group">
+        <label>اسم الموقع / النشاط التجاري *</label>
+        <input type="text" id="siteName" required placeholder="مثال: شركة الابتكار المتقدم أو كافيه الشلال">
+      </div>
+
+      <div class="form-group">
+        <label>اختر القالب المناسب:</label>
+        <div class="template-selector">
+          <div class="template-card active" onclick="selectCategory('corporate', this)">
+            <div class="icon">🏢</div>
+            <div class="title">شركة / مؤسسة</div>
+          </div>
+          <div class="template-card" onclick="selectCategory('restaurant', this)">
+            <div class="icon">🍽️</div>
+            <div class="title">مطعم / كافيه</div>
+          </div>
+          <div class="template-card" onclick="selectCategory('portfolio', this)">
+            <div class="icon">🎨</div>
+            <div class="title">معرض أعمال / بورتفوليو</div>
+          </div>
+          <div class="template-card" onclick="selectCategory('medical', this)">
+            <div class="icon">🏥</div>
+            <div class="title">عيادة / مركز طبي</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>رقم الهاتف للتواصل (اختياري)</label>
+        <input type="tel" id="sitePhone" placeholder="01xxxxxxxx">
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px">
+        <button type="button" class="btn-action" style="padding:10px 16px" onclick="closeModal()">إلغاء</button>
+        <button type="submit" class="btn-create" style="padding:10px 20px" id="submitBtn">إنشاء الموقع فوراً 🚀</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let selectedCat = 'corporate';
+
+function selectCategory(cat, el) {
+  selectedCat = cat;
+  document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function openCreateModal() {
+  document.getElementById('createModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('createModal').classList.remove('show');
+}
+
+async function loadWebsites() {
+  try {
+    const res = await fetch('/api/builder/websites?_t=' + Date.now());
+    if(!res.ok) return;
+    const sites = await res.json();
+    const grid = document.getElementById('sitesGrid');
+    document.getElementById('sitesCount').textContent = sites.length;
+
+    if(!sites || !sites.length) {
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;background:var(--card);border-radius:18px;border:1px dashed var(--card-border)">
+          <div style="font-size:3rem;margin-bottom:10px">🌐</div>
+          <h3 style="color:#fff;margin-bottom:6px">لم تقم بإنشاء أي موقع إلكتروني بعد</h3>
+          <p style="font-size:0.85rem">اضغط على زر "أنشئ موقعك الإلكتروني الآن" للبدء في صياغة موقعك بسهولة</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = sites.map(s => `
+      <div class="site-card">
+        <div class="site-header">
+          <div class="site-icon">🌐</div>
+          <div class="site-info">
+            <h3>${escapeHtml(s.site_name)}</h3>
+            <p>/site/${s.site_slug}</p>
+          </div>
+        </div>
+        
+        <div class="site-stats">
+          <span>👁️ الزيارات: ${s.views_count}</span>
+          <span>📄 الصفحات: ${s.pages_count}</span>
+          <span>📬 الرسائل: ${s.unread_messages}</span>
+        </div>
+
+        <div class="site-actions">
+          <a href="/builder/editor/${s.site_slug}" class="btn-action edit">✏️ المحرر Visual Editor</a>
+          <a href="/site/${s.site_slug}" target="_blank" class="btn-action view">👁️ معاينة</a>
+          <button class="btn-action delete" onclick="deleteSite(${s.id}, '${escapeHtml(s.site_name)}')">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function deleteSite(id, name) {
+  if(!confirm(`هل أنت تأكد من رغبتك في حذف الموقع "${name}" تماماً؟`)) return;
+  try {
+    const res = await fetch('/api/builder/websites/' + id, { method: 'DELETE' });
+    if(res.ok) loadWebsites();
+  } catch(e) { console.error(e); }
+}
+
+document.getElementById('createSiteForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'جاري توليد الموقع...';
+
+  try {
+    const res = await fetch('/api/builder/websites/create', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        site_name: document.getElementById('siteName').value,
+        category: selectedCat,
+        phone: document.getElementById('sitePhone').value
+      })
+    });
+    const result = await res.json();
+    if(result.success) {
+      window.location.href = '/builder/editor/' + result.slug;
+    } else {
+      alert('❌ ' + (result.error || 'حدث خطأ أثناء إنشاء الموقع'));
+    }
+  } catch(e) {
+    alert('❌ تعذر الاتصال بالسيرفر');
+  }
+  btn.disabled = false;
+  btn.textContent = 'إنشاء الموقع فوراً 🚀';
+};
+
+loadWebsites();
+setInterval(loadWebsites, 3500);
+</script>
+</body>
+</html>
