@@ -39,6 +39,13 @@ import com.example.ui.theme.*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        try {
+            if (com.google.firebase.FirebaseApp.getApps(this).isEmpty()) {
+                com.google.firebase.FirebaseApp.initializeApp(this)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         enableEdgeToEdge()
         setContent {
             RafeeqTheme {
@@ -52,6 +59,7 @@ enum class NavigationTab(val label: String, val icon: ImageVector, val tag: Stri
     REPOSITORY("المستودع", Icons.Outlined.Folder, "nav_repo"),
     STORES("المتاجر", Icons.Outlined.Storefront, "nav_stores"),
     SHORTS("رفيق شورتس", Icons.Outlined.VideoLibrary, "nav_shorts"),
+    LIVESTREAM("البث المباشر", Icons.Outlined.Videocam, "nav_livestream"),
     SEARCH("البحث", Icons.Outlined.Search, "nav_search"),
     WEBSITES("المواقع", Icons.Outlined.Web, "nav_websites"),
     SOCIAL("الشبكة", Icons.Outlined.Share, "nav_social"),
@@ -123,16 +131,31 @@ fun RafeeqApp() {
     var searchQuery by remember { mutableStateOf("") }
     var showAuthDialog by remember { mutableStateOf(false) }
 
-    val firebaseAuth = remember { com.google.firebase.auth.FirebaseAuth.getInstance() }
-    var currentUser by remember { mutableStateOf(firebaseAuth.currentUser) }
+    val context = LocalContext.current
+    val firebaseAuth = remember(context) {
+        try {
+            if (com.google.firebase.FirebaseApp.getApps(context).isEmpty()) {
+                com.google.firebase.FirebaseApp.initializeApp(context)
+            }
+            com.google.firebase.auth.FirebaseAuth.getInstance()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    var currentUser by remember { mutableStateOf(firebaseAuth?.currentUser) }
 
     DisposableEffect(firebaseAuth) {
-        val listener = com.google.firebase.auth.FirebaseAuth.AuthStateListener { auth ->
-            currentUser = auth.currentUser
-        }
-        firebaseAuth.addAuthStateListener(listener)
-        onDispose {
-            firebaseAuth.removeAuthStateListener(listener)
+        if (firebaseAuth != null) {
+            val listener = com.google.firebase.auth.FirebaseAuth.AuthStateListener { auth ->
+                currentUser = auth.currentUser
+            }
+            firebaseAuth.addAuthStateListener(listener)
+            onDispose {
+                firebaseAuth.removeAuthStateListener(listener)
+            }
+        } else {
+            onDispose { }
         }
     }
 
@@ -263,8 +286,8 @@ fun RafeeqApp() {
             // Header stats
             StatsHeaderSummary(selectedTab)
 
-            // Search filter box (if not in shorts, search, wallet, or profile mode)
-            if (selectedTab != NavigationTab.SHORTS && selectedTab != NavigationTab.PROFILE && selectedTab != NavigationTab.WALLET && selectedTab != NavigationTab.SEARCH) {
+            // Search filter box (if not in shorts, search, wallet, profile, or livestream mode)
+            if (selectedTab != NavigationTab.SHORTS && selectedTab != NavigationTab.PROFILE && selectedTab != NavigationTab.WALLET && selectedTab != NavigationTab.SEARCH && selectedTab != NavigationTab.LIVESTREAM) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
@@ -290,10 +313,11 @@ fun RafeeqApp() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = if (selectedTab == NavigationTab.SHORTS || selectedTab == NavigationTab.PROFILE || selectedTab == NavigationTab.WALLET || selectedTab == NavigationTab.SEARCH) 0.dp else 16.dp)
+                    .padding(horizontal = if (selectedTab == NavigationTab.SHORTS || selectedTab == NavigationTab.PROFILE || selectedTab == NavigationTab.WALLET || selectedTab == NavigationTab.SEARCH || selectedTab == NavigationTab.LIVESTREAM) 0.dp else 16.dp)
             ) {
                 when (selectedTab) {
                     NavigationTab.SHORTS -> ShortsSection()
+                    NavigationTab.LIVESTREAM -> LiveStreamScreen(onCloseScreen = { selectedTab = NavigationTab.STORES })
                     NavigationTab.REPOSITORY -> RepositorySection(searchQuery)
                     NavigationTab.STORES -> StoresSection(searchQuery)
                     NavigationTab.SEARCH -> SearchScreen(initialQuery = searchQuery)

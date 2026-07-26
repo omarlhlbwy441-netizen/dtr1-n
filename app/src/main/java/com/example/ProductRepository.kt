@@ -11,9 +11,16 @@ import java.util.UUID
 /**
  * Repository for querying and filtering products from Firestore (`products` collection)
  */
-class ProductRepository(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-) {
+class ProductRepository {
+    private val firestore: FirebaseFirestore? by lazy {
+        try {
+            FirebaseFirestore.getInstance()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     /**
      * Real-time stream of Products from Firestore collection `products`
      * Supports search filtering by query text and selected category
@@ -22,7 +29,15 @@ class ProductRepository(
         queryText: String = "",
         categoryFilter: String = "الكل"
     ): Flow<List<Product>> = callbackFlow {
-        val collectionRef = firestore.collection("products")
+        val fs = firestore
+        if (fs == null) {
+            val samples = Product.getSampleProducts()
+            trySend(filterProductList(samples, queryText, categoryFilter))
+            awaitClose { }
+            return@callbackFlow
+        }
+
+        val collectionRef = fs.collection("products")
 
         val listener = collectionRef
             .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -54,12 +69,13 @@ class ProductRepository(
      */
     suspend fun seedInitialProductsIfEmpty(): Result<Unit> {
         return try {
-            val snapshot = firestore.collection("products").limit(1).get().await()
+            val fs = firestore ?: return Result.failure(Exception("Firestore not initialized"))
+            val snapshot = fs.collection("products").limit(1).get().await()
             if (snapshot.isEmpty) {
                 val samples = Product.getSampleProducts()
-                val batch = firestore.batch()
+                val batch = fs.batch()
                 for (prod in samples) {
-                    val docRef = firestore.collection("products").document(prod.id)
+                    val docRef = fs.collection("products").document(prod.id)
                     batch.set(docRef, prod.toMap())
                 }
                 batch.commit().await()
@@ -75,9 +91,10 @@ class ProductRepository(
      */
     suspend fun addProduct(product: Product): Result<String> {
         return try {
+            val fs = firestore ?: return Result.failure(Exception("Firestore not initialized"))
             val docId = if (product.id.isBlank()) UUID.randomUUID().toString() else product.id
             val finalProduct = product.copy(id = docId, createdAt = System.currentTimeMillis())
-            firestore.collection("products")
+            fs.collection("products")
                 .document(docId)
                 .set(finalProduct.toMap())
                 .await()

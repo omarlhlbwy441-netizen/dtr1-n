@@ -10,10 +10,16 @@ import kotlinx.coroutines.tasks.await
 /**
  * Repository for saving and retrieving user profile data from Cloud Firestore
  */
-class UserProfileRepository(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-) {
-    private val usersCollection = firestore.collection("users")
+class UserProfileRepository {
+    private val firestore: FirebaseFirestore? by lazy {
+        try {
+            FirebaseFirestore.getInstance()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    private val usersCollection get() = firestore?.collection("users")
 
     /**
      * Store or update user profile data in Firestore
@@ -23,7 +29,8 @@ class UserProfileRepository(
             if (userProfile.uid.isBlank()) {
                 return Result.failure(IllegalArgumentException("User UID cannot be blank"))
             }
-            usersCollection.document(userProfile.uid)
+            val col = usersCollection ?: return Result.failure(Exception("Firestore not initialized"))
+            col.document(userProfile.uid)
                 .set(userProfile.toMap(), SetOptions.merge())
                 .await()
             Result.success(Unit)
@@ -43,9 +50,10 @@ class UserProfileRepository(
             if (uid.isBlank()) {
                 return Result.failure(IllegalArgumentException("User UID cannot be blank"))
             }
+            val col = usersCollection ?: return Result.failure(Exception("Firestore not initialized"))
             val updatedMap = fields.toMutableMap()
             updatedMap["updatedAt"] = System.currentTimeMillis()
-            usersCollection.document(uid)
+            col.document(uid)
                 .set(updatedMap, SetOptions.merge())
                 .await()
             Result.success(Unit)
@@ -103,7 +111,8 @@ class UserProfileRepository(
             if (uid.isBlank()) {
                 return Result.success(null)
             }
-            val snapshot = usersCollection.document(uid).get().await()
+            val col = usersCollection ?: return Result.failure(Exception("Firestore not initialized"))
+            val snapshot = col.document(uid).get().await()
             if (snapshot.exists() && snapshot.data != null) {
                 Result.success(UserProfile.fromMap(snapshot.data!!))
             } else {
@@ -124,7 +133,14 @@ class UserProfileRepository(
             return@callbackFlow
         }
 
-        val listener = usersCollection.document(uid)
+        val col = usersCollection
+        if (col == null) {
+            trySend(null)
+            close()
+            return@callbackFlow
+        }
+
+        val listener = col.document(uid)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     close(error)
