@@ -54,6 +54,7 @@ enum class NavigationTab(val label: String, val icon: ImageVector, val tag: Stri
     SHORTS("رفيق شورتس", Icons.Outlined.VideoLibrary, "nav_shorts"),
     WEBSITES("المواقع", Icons.Outlined.Web, "nav_websites"),
     SOCIAL("الشبكة", Icons.Outlined.Share, "nav_social"),
+    WALLET("المحفظة", Icons.Outlined.AccountBalanceWallet, "nav_wallet"),
     PROFILE("الملف الشخصي", Icons.Outlined.Person, "nav_profile")
 }
 
@@ -261,8 +262,8 @@ fun RafeeqApp() {
             // Header stats
             StatsHeaderSummary(selectedTab)
 
-            // Search filter box (if not in shorts mode or profile mode)
-            if (selectedTab != NavigationTab.SHORTS && selectedTab != NavigationTab.PROFILE) {
+            // Search filter box (if not in shorts mode, wallet mode, or profile mode)
+            if (selectedTab != NavigationTab.SHORTS && selectedTab != NavigationTab.PROFILE && selectedTab != NavigationTab.WALLET) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
@@ -288,7 +289,7 @@ fun RafeeqApp() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = if (selectedTab == NavigationTab.SHORTS || selectedTab == NavigationTab.PROFILE) 0.dp else 16.dp)
+                    .padding(horizontal = if (selectedTab == NavigationTab.SHORTS || selectedTab == NavigationTab.PROFILE || selectedTab == NavigationTab.WALLET) 0.dp else 16.dp)
             ) {
                 when (selectedTab) {
                     NavigationTab.SHORTS -> ShortsSection()
@@ -296,6 +297,7 @@ fun RafeeqApp() {
                     NavigationTab.STORES -> StoresSection(searchQuery)
                     NavigationTab.WEBSITES -> WebsitesSection(searchQuery)
                     NavigationTab.SOCIAL -> SocialSection(searchQuery)
+                    NavigationTab.WALLET -> WalletScreen(onOpenAuthDialog = { showAuthDialog = true })
                     NavigationTab.PROFILE -> UserProfileScreen(onOpenAuthDialog = { showAuthDialog = true })
                 }
             }
