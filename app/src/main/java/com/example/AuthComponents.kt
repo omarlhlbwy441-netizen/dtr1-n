@@ -71,17 +71,31 @@ fun AuthCardContent(
     onDismissRequest: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    val auth = remember { FirebaseAuth.getInstance() }
-    var currentUser by remember { mutableStateOf(auth.currentUser) }
+    val auth = remember(context) {
+        try {
+            if (com.google.firebase.FirebaseApp.getApps(context).isEmpty()) {
+                com.google.firebase.FirebaseApp.initializeApp(context)
+            }
+            FirebaseAuth.getInstance()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    var currentUser by remember(auth) { mutableStateOf(auth?.currentUser) }
 
     // Listen for auth state changes
     DisposableEffect(auth) {
-        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            currentUser = firebaseAuth.currentUser
-        }
-        auth.addAuthStateListener(listener)
-        onDispose {
-            auth.removeAuthStateListener(listener)
+        if (auth != null) {
+            val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+                currentUser = firebaseAuth.currentUser
+            }
+            auth.addAuthStateListener(listener)
+            onDispose {
+                auth.removeAuthStateListener(listener)
+            }
+        } else {
+            onDispose { }
         }
     }
 
@@ -102,7 +116,7 @@ fun AuthCardContent(
 @Composable
 fun UserProfileView(
     user: FirebaseUser,
-    auth: FirebaseAuth,
+    auth: FirebaseAuth?,
     onDismiss: (() -> Unit)?
 ) {
     val context = LocalContext.current
@@ -226,7 +240,7 @@ fun UserProfileView(
         // Sign Out Button
         Button(
             onClick = {
-                auth.signOut()
+                auth?.signOut()
                 Toast.makeText(context, "تم تسجيل الخروج بنجاح", Toast.LENGTH_SHORT).show()
                 onDismiss?.invoke()
             },
@@ -246,7 +260,7 @@ fun UserProfileView(
 
 @Composable
 fun AuthFormView(
-    auth: FirebaseAuth,
+    auth: FirebaseAuth?,
     onDismiss: (() -> Unit)?
 ) {
     val context = LocalContext.current
@@ -465,6 +479,11 @@ fun AuthFormView(
         // Primary Action Button
         Button(
             onClick = {
+                if (auth == null) {
+                    errorMessage = "خدمة التوثيق غير متصلة حالياً، يرجى إعادة المحاولة لاحقاً."
+                    return@Button
+                }
+
                 if (email.isBlank()) {
                     errorMessage = "يرجى إدخال البريد الإلكتروني"
                     return@Button
@@ -638,10 +657,14 @@ fun AuthFormView(
  */
 private suspend fun performGoogleSignIn(
     context: Context,
-    auth: FirebaseAuth,
+    auth: FirebaseAuth?,
     onSuccess: () -> Unit,
     onError: (String) -> Unit
 ) {
+    if (auth == null) {
+        onError("خدمة التوثيق غير متصلة حالياً")
+        return
+    }
     try {
         val credentialManager = CredentialManager.create(context)
 

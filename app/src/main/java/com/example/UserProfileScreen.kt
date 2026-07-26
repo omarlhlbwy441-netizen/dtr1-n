@@ -44,17 +44,31 @@ fun UserProfileScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val auth = remember { FirebaseAuth.getInstance() }
-    var currentUser by remember { mutableStateOf(auth.currentUser) }
+    val auth = remember(context) {
+        try {
+            if (com.google.firebase.FirebaseApp.getApps(context).isEmpty()) {
+                com.google.firebase.FirebaseApp.initializeApp(context)
+            }
+            FirebaseAuth.getInstance()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    var currentUser by remember(auth) { mutableStateOf(auth?.currentUser) }
 
     // Listen to Firebase Auth state
     DisposableEffect(auth) {
-        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            currentUser = firebaseAuth.currentUser
-        }
-        auth.addAuthStateListener(listener)
-        onDispose {
-            auth.removeAuthStateListener(listener)
+        if (auth != null) {
+            val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+                currentUser = firebaseAuth.currentUser
+            }
+            auth.addAuthStateListener(listener)
+            onDispose {
+                auth.removeAuthStateListener(listener)
+            }
+        } else {
+            onDispose { }
         }
     }
 
@@ -150,7 +164,7 @@ private fun UnauthenticatedProfileState(
 private fun AuthenticatedProfileState(
     user: FirebaseUser,
     repository: UserProfileRepository,
-    auth: FirebaseAuth
+    auth: FirebaseAuth?
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -606,7 +620,7 @@ private fun AuthenticatedProfileState(
 
                 Button(
                     onClick = {
-                        auth.signOut()
+                        auth?.signOut()
                         Toast.makeText(context, "تم تسجيل الخروج بنجاح", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier
