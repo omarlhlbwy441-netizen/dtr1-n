@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -194,6 +195,8 @@ private fun AuthenticatedProfileState(
 
     val dateFormat = remember { SimpleDateFormat("dd MMMM yyyy", Locale("ar")) }
 
+    val isVipActive = displayProfile.isVipActive()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -218,47 +221,93 @@ private fun AuthenticatedProfileState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Avatar Box
+                // Avatar Box with VIP Golden Badge Overlay
                 Box(
-                    modifier = Modifier
-                        .size(88.dp)
-                        .clip(CircleShape)
-                        .background(
-                            Brush.linearGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.tertiary
-                                )
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.BottomEnd
                 ) {
-                    val photoUrl = displayProfile.photoUrl.ifBlank { user.photoUrl?.toString() ?: "" }
-                    if (photoUrl.isNotBlank()) {
-                        CoilAsyncImage(
-                            imageUrl = photoUrl,
-                            contentDescription = displayProfile.displayName,
-                            modifier = Modifier.fillMaxSize(),
-                            shape = CircleShape
-                        )
-                    } else {
-                        Text(
-                            text = (displayProfile.displayName.firstOrNull() ?: user.email?.firstOrNull() ?: 'U')
-                                .uppercaseChar().toString(),
-                            color = Color.White,
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Bold
-                        )
+                    Box(
+                        modifier = Modifier
+                            .size(92.dp)
+                            .clip(CircleShape)
+                            .border(
+                                width = if (isVipActive) 3.dp else 0.dp,
+                                brush = Brush.sweepGradient(
+                                    listOf(Color(0xFFFFD700), Color(0xFFFFA500), Color(0xFFFF8C00), Color(0xFFFFD700))
+                                ),
+                                shape = CircleShape
+                            )
+                            .background(
+                                Brush.linearGradient(
+                                    colors = if (isVipActive)
+                                        listOf(Color(0xFFFFD700), Color(0xFFD97706))
+                                    else
+                                        listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary)
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val photoUrl = displayProfile.photoUrl.ifBlank { user.photoUrl?.toString() ?: "" }
+                        if (photoUrl.isNotBlank()) {
+                            CoilAsyncImage(
+                                imageUrl = photoUrl,
+                                contentDescription = displayProfile.displayName,
+                                modifier = Modifier.fillMaxSize(),
+                                shape = CircleShape
+                            )
+                        } else {
+                            Text(
+                                text = (displayProfile.displayName.firstOrNull() ?: user.email?.firstOrNull() ?: 'U')
+                                    .uppercaseChar().toString(),
+                                color = Color.White,
+                                style = MaterialTheme.typography.headlineLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    // Floating Crown / VIP Badge
+                    if (isVipActive) {
+                        Surface(
+                            shape = CircleShape,
+                            color = Color(0xFFFFD700),
+                            shadowElevation = 4.dp,
+                            modifier = Modifier
+                                .size(28.dp)
+                                .offset(x = 2.dp, y = 2.dp)
+                                .testTag("vip_avatar_badge")
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.WorkspacePremium,
+                                    contentDescription = "عضوية VIP",
+                                    tint = Color(0xFF1F1200),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
                     }
                 }
 
                 // Name & Email
-                Text(
-                    text = displayProfile.displayName.ifBlank { user.displayName ?: "مستخدم رفيق" },
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = displayProfile.displayName.ifBlank { user.displayName ?: "مستخدم رفيق" },
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    if (isVipActive) {
+                        Icon(
+                            imageVector = Icons.Default.Stars,
+                            contentDescription = "VIP Badge",
+                            tint = Color(0xFFD97706),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
 
                 Text(
                     text = displayProfile.email.ifBlank { user.email ?: "" },
@@ -275,7 +324,11 @@ private fun AuthenticatedProfileState(
                     // Role Badge
                     Surface(
                         shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer
+                        color = if (isVipActive) Color(0xFFFEF3C7) else MaterialTheme.colorScheme.primaryContainer,
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            if (isVipActive) Color(0xFFF59E0B) else Color.Transparent
+                        )
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
@@ -283,20 +336,20 @@ private fun AuthenticatedProfileState(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Icon(
-                                Icons.Default.Stars,
+                                imageVector = if (isVipActive) Icons.Default.WorkspacePremium else Icons.Default.Stars,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = if (isVipActive) Color(0xFFB45309) else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(16.dp)
                             )
                             Text(
-                                text = when (displayProfile.role.uppercase()) {
-                                    "VIP" -> "عضو VIP"
-                                    "MERCHANT" -> "تاجر معتمد"
+                                text = when {
+                                    isVipActive -> "عضو VIP ذهبي 👑"
+                                    displayProfile.role.equals("MERCHANT", ignoreCase = true) -> "تاجر معتمد"
                                     else -> "عضو رفيق"
                                 },
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                color = if (isVipActive) Color(0xFFB45309) else MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
                     }
@@ -329,6 +382,13 @@ private fun AuthenticatedProfileState(
                 }
             }
         }
+
+        // VIP Membership Status Card
+        VipMembershipCard(
+            userProfile = displayProfile,
+            repository = repository,
+            userId = user.uid
+        )
 
         // Details / Edit Card
         Card(
@@ -604,5 +664,325 @@ private fun ProfileDetailItem(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
+    }
+}
+
+@Composable
+private fun VipMembershipCard(
+    userProfile: UserProfile,
+    repository: UserProfileRepository,
+    userId: String
+) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var isUpdating by remember { mutableStateOf(false) }
+    var selectedPlan by remember { mutableStateOf("YEARLY") } // "MONTHLY", "YEARLY"
+    val isVip = userProfile.isVipActive()
+
+    val dateFormat = remember { SimpleDateFormat("dd MMMM yyyy", Locale("ar")) }
+
+    Card(
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("vip_membership_card")
+            .border(
+                width = if (isVip) 2.dp else 1.dp,
+                brush = Brush.horizontalGradient(
+                    if (isVip) listOf(Color(0xFFFFD700), Color(0xFFFFA500), Color(0xFFFF8C00))
+                    else listOf(Color(0xFFE2E8F0), Color(0xFFCBD5E1))
+                ),
+                shape = RoundedCornerShape(24.dp)
+            )
+            .background(
+                brush = Brush.verticalGradient(
+                    if (isVip) listOf(Color(0xFF2A1B03), Color(0xFF1F1200))
+                    else listOf(MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+                ),
+                shape = RoundedCornerShape(24.dp)
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Header Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Surface(
+                        shape = CircleShape,
+                        color = if (isVip) Color(0xFFFFD700) else MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = if (isVip) Icons.Default.WorkspacePremium else Icons.Outlined.MilitaryTech,
+                                contentDescription = "VIP",
+                                tint = if (isVip) Color(0xFF1F1200) else MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+
+                    Column {
+                        Text(
+                            text = if (isVip) "عضوية VIP الذهبية النشطة 👑" else "ترقية إلى عضوية VIP 🌟",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isVip) Color(0xFFFFD700) else MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = if (isVip)
+                                (if (userProfile.vipPlanName.isNotBlank()) userProfile.vipPlanName else "باقة VIP المتميزة")
+                            else "احصل على ميزات استثنائية وتجربة فاخرة",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = if (isVip) Color(0xFFFFE082) else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (isVip) Color(0xFF10B981) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                ) {
+                    Text(
+                        text = if (isVip) "نشط الأن" else "غير مفعل",
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isVip) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            if (isVip) {
+                // Active VIP View
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.White.copy(alpha = 0.08f))
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "تاريخ انتهاء الاشتراك:",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color(0xFFFFECB3)
+                        )
+                        Text(
+                            text = if (userProfile.vipExpirationDate > 0) dateFormat.format(Date(userProfile.vipExpirationDate)) else "عضوية دائمية",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFFFD700)
+                        )
+                    }
+
+                    Divider(color = Color.White.copy(alpha = 0.15f))
+
+                    Text(
+                        text = "المميزات المتاحة لحسابك:",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    VipFeatureItem(icon = Icons.Default.Verified, text = "شارة VIP الذهبية بجانب اسمك في كافة أقسام التطبيق", isGold = true)
+                    VipFeatureItem(icon = Icons.Default.FastForward, text = "أولوية دعم العملاء والرد الفوري 24/7", isGold = true)
+                    VipFeatureItem(icon = Icons.Default.Discount, text = "خصم حصري 20% على رسوم المزاد والمنتجات", isGold = true)
+                    VipFeatureItem(icon = Icons.Default.Block, text = "تصفح كامل وخالٍ تماماً من الإعلانات", isGold = true)
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                isUpdating = true
+                                val result = repository.updateVipSubscription(
+                                    uid = userId,
+                                    isVip = true,
+                                    planName = "تجديد باقة VIP السنوية 👑",
+                                    durationDays = 365
+                                )
+                                isUpdating = false
+                                if (result.isSuccess) {
+                                    Toast.makeText(context, "تم تمديد اشتراك VIP لمدة سنة بنجاح! 👑", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        enabled = !isUpdating,
+                        modifier = Modifier.weight(1f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFD700)),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFFD700))
+                    ) {
+                        Text("تمديد سنة إضافية", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    }
+
+                    TextButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                isUpdating = true
+                                val result = repository.updateVipSubscription(
+                                    uid = userId,
+                                    isVip = false
+                                )
+                                isUpdating = false
+                                if (result.isSuccess) {
+                                    Toast.makeText(context, "تم إلغاء تفعيل VIP", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        enabled = !isUpdating,
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFEF4444))
+                    ) {
+                        Text("إلغاء التفعيل", fontSize = 12.sp)
+                    }
+                }
+            } else {
+                // Non-VIP Offer View
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    VipFeatureItem(icon = Icons.Default.Star, text = "شارة ذهبية موثقة تظهر لدى جميع المستخدمين", isGold = false)
+                    VipFeatureItem(icon = Icons.Default.Speed, text = "تسريع وتفضيل إعلاناتك ومحتوى المتاجر", isGold = false)
+                    VipFeatureItem(icon = Icons.Default.Percent, text = "خصم خاص 20% على عمولات الشراء والمزادات", isGold = false)
+                    VipFeatureItem(icon = Icons.Default.HeadsetMic, text = "قناة تواصل مباشرة ومخصصة لمشتركي VIP", isGold = false)
+                }
+
+                // Plan Selector Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // Monthly Plan
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (selectedPlan == "MONTHLY") MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.5.dp,
+                            if (selectedPlan == "MONTHLY") MaterialTheme.colorScheme.primary else Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { selectedPlan = "MONTHLY" }
+                            .padding(12.dp)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("الباقة الشهرية", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                            Text("9.99$ / شهر", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+
+                    // Yearly Plan
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (selectedPlan == "YEARLY") Color(0xFFFEF3C7) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.5.dp,
+                            if (selectedPlan == "YEARLY") Color(0xFFD97706) else Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { selectedPlan = "YEARLY" }
+                            .padding(12.dp)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("الباقة السنوية (توفير 30%)", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = Color(0xFF92400E))
+                            Text("79.99$ / سنة", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color(0xFFB45309))
+                        }
+                    }
+                }
+
+                // Upgrade Button
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            isUpdating = true
+                            val planName = if (selectedPlan == "YEARLY") "باقة VIP السنوية 👑" else "باقة VIP الشهرية 👑"
+                            val durationDays = if (selectedPlan == "YEARLY") 365 else 30
+                            val result = repository.updateVipSubscription(
+                                uid = userId,
+                                isVip = true,
+                                planName = planName,
+                                durationDays = durationDays
+                            )
+                            isUpdating = false
+                            if (result.isSuccess) {
+                                Toast.makeText(context, "تهانينا! تم تفعيل اشتراك VIP بنجاح 🎉", Toast.LENGTH_LONG).show()
+                            } else {
+                                Toast.makeText(context, "حدث خطأ أثناء التفعيل: ${result.exceptionOrNull()?.localizedMessage}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    },
+                    enabled = !isUpdating,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD97706),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .testTag("activate_vip_button"),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    if (isUpdating) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp)
+                    } else {
+                        Icon(Icons.Default.WorkspacePremium, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("تفعيل اشتراك VIP الآن 👑", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun VipFeatureItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    text: String,
+    isGold: Boolean
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(vertical = 2.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (isGold) Color(0xFFFFD700) else MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = if (isGold) Color.White else MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.Medium
+        )
     }
 }

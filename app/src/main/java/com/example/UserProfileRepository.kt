@@ -73,6 +73,29 @@ class UserProfileRepository(
     }
 
     /**
+     * Activate or update VIP subscription status in Firestore
+     */
+    suspend fun updateVipSubscription(
+        uid: String,
+        isVip: Boolean,
+        planName: String = "باقة VIP الذهبية",
+        durationDays: Int = 30
+    ): Result<Unit> {
+        val expirationDate = if (isVip) {
+            System.currentTimeMillis() + (durationDays.toLong() * 24 * 60 * 60 * 1000)
+        } else {
+            0L
+        }
+        val fields = mapOf(
+            "isVip" to isVip,
+            "role" to if (isVip) "VIP" else "USER",
+            "vipPlanName" to if (isVip) planName else "",
+            "vipExpirationDate" to expirationDate
+        )
+        return updateUserProfileFields(uid, fields)
+    }
+
+    /**
      * Retrieve user profile data by UID
      */
     suspend fun getUserProfile(uid: String): Result<UserProfile?> {
