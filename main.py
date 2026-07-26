@@ -452,6 +452,7 @@ def render_layout(title, content, active_page=""):
     vip_cls = "nav-item active" if active_page == "vip" else "nav-item"
     affiliate_cls = "nav-item active" if active_page == "affiliate" else "nav-item"
     blueprint_cls = "nav-item active" if active_page == "blueprint" else "nav-item"
+    travel_cls = "nav-item active" if active_page == "travel" else "nav-item"
 
     if is_logged_in:
         nav_dashboard = f'<a href="/dashboard" class="{dash_cls}">لوحة التحكم 📊</a>'
@@ -546,6 +547,7 @@ def render_layout(title, content, active_page=""):
                 <a href="/ai-assistant" class="{ai_cls}">الذكاء الاصطناعي 🤖</a>
                 <a href="/analytics" class="{analytics_cls}">التحليلات 📊</a>
                 <a href="/escrow" class="{escrow_cls}">الضمان 🔒</a>
+                <a href="/travel" class="{travel_cls}">السفر والحجوزات ✈️</a>
                 <a href="/verification" class="{verification_cls}">التوثيق 🛡️</a>
                 <a href="/vip" class="{vip_cls}">المكافآت 🏆</a>
                 <a href="/affiliate" class="{affiliate_cls}">التسويق 🔗</a>
@@ -3457,6 +3459,351 @@ def blueprint_page():
     </div>
     """
     return render_layout("التوثيق الفني", content, active_page="blueprint")
+
+@app.route("/travel", methods=["GET", "POST"])
+def travel_page():
+    booking_success = ""
+    ticket_data = None
+    if request.method == "POST":
+        travel_type = request.form.get("travel_type", "رحلة جوية ✈️")
+        origin = request.form.get("origin", "الرياض")
+        destination = request.form.get("destination", "جدة")
+        travel_date = request.form.get("travel_date", "2026-08-01")
+        passengers = request.form.get("passengers", "1")
+        tier = request.form.get("tier", "درجة رجال الأعمال 💼")
+        agency_name = request.form.get("agency_name", "وكالة الذئب الملكي المعتمدة ✅")
+        price_sar = request.form.get("calculated_price", "450")
+
+        escrow_id = f"ESC-TRV-{random.randint(100000, 999999)}"
+        ticket_ref = f"RFQ-{random.randint(1000, 9999)}-{random.randint(10, 99)}"
+
+        booking_success = f"تم تأكيد حجزك بنجاح تحت حماية الضمان المالي برقم: {escrow_id}!"
+        ticket_data = {
+            "escrow_id": escrow_id,
+            "ticket_ref": ticket_ref,
+            "type": travel_type,
+            "origin": origin,
+            "destination": destination,
+            "date": travel_date,
+            "passengers": passengers,
+            "tier": tier,
+            "agency": agency_name,
+            "price": price_sar
+        }
+
+    ticket_modal_js = ""
+    if ticket_data:
+        ticket_modal_js = f"""
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {{
+            showRafeeqModal(
+                '🎫 تذكرة وقسيمة حجز وكالة الذئب الرقمي',
+                'تم احتجاز المبلغ ({ticket_data['price']} SAR) في حساب الضمان الذكي ({ticket_data['escrow_id']}).\\n' +
+                'مرجع التذكرة: {ticket_data['ticket_ref']}\\n' +
+                'نوع الحجز: {ticket_data['type']}\\n' +
+                'المسار: {ticket_data['origin']} ➔ {ticket_data['destination']}\\n' +
+                'التاريخ: {ticket_data['date']} | المسافرين: {ticket_data['passengers']}\\n' +
+                'الوكالة المعتمدة: {ticket_data['agency']}\\n' +
+                'نتمنى لك رحلة ممتعة وآمنة مع رفيق! 🐺✈️',
+                '🎫'
+            );
+        }});
+        </script>
+        """
+
+    content = f"""
+    {ticket_modal_js}
+    <div style="max-width: 1050px; margin: 0 auto;">
+        <!-- Hero Title Section -->
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.4); padding: 0.35rem 1rem; border-radius: 20px; color: #d4af37; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.75rem;">
+                <span>🛡️ منصة الحجوزات الموحدة برعاية الضمان المالي Smart Escrow</span>
+            </div>
+            <h2 class="title-gold" style="font-size: 1.75rem;">✈️ وكالة الذئب الرقمي للسفر والحجوزات | Rafeeq Travel Agency</h2>
+            <p class="subtitle-text" style="max-width: 800px; margin: 0 auto;">
+                منظومة الحجوزات المتكاملة للرحلات البرية، البحرية، الجوية، الفنادق والمنتجعات، العمرة والحج، والرحلات العلمية والعملية والدورات التدريبية المعتمدة.
+            </p>
+        </div>
+
+        <!-- System Protection Banner -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div class="glass-card" style="padding: 1rem; text-align: center;">
+                <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">🔒</div>
+                <div style="font-weight: bold; color: #34d399; font-size: 0.9rem;">ضمان مالي 100%</div>
+                <p style="font-size: 0.75rem; color: #9ca3af; margin: 0.2rem 0 0 0;">تُحتجز الأموال في الضمان الذكي لحين تأكيد الرحلة</p>
+            </div>
+            <div class="glass-card" style="padding: 1rem; text-align: center;">
+                <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">✅</div>
+                <div style="font-weight: bold; color: #38bdf8; font-size: 0.9rem;">وكالات ومكاتب موثقة</div>
+                <p style="font-size: 0.75rem; color: #9ca3af; margin: 0.2rem 0 0 0;">جميع المكاتب بالشهادة الذهبية المعتمدة</p>
+            </div>
+            <div class="glass-card" style="padding: 1rem; text-align: center;">
+                <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">💎</div>
+                <div style="font-weight: bold; color: #d4af37; font-size: 0.9rem;">استرداد نقاط VIP</div>
+                <p style="font-size: 0.75rem; color: #9ca3af; margin: 0.2rem 0 0 0;">اكسب 5% جواهر ملكية مع كل عملية حجز</p>
+            </div>
+            <div class="glass-card" style="padding: 1rem; text-align: center;">
+                <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">🎟️</div>
+                <div style="font-weight: bold; color: #a855f7; font-size: 0.9rem;">تذاكر رقمية فورية</div>
+                <p style="font-size: 0.75rem; color: #9ca3af; margin: 0.2rem 0 0 0;">طباعة وتأكيد فوري للتذاكر وقسائم الإقامة</p>
+            </div>
+        </div>
+
+        {"<div style='background: rgba(52, 211, 153, 0.15); border: 1px solid #34d399; color: #34d399; padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; text-align: center; font-weight: bold; font-size: 0.95rem;'>" + booking_success + "</div>" if booking_success else ""}
+
+        <!-- Booking Studio Form -->
+        <div class="glass-card" style="padding: 1.75rem; margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h3 style="color: #f5e6c8; font-size: 1.2rem; margin: 0;">🧭 استوديو البحث والحجز الذكي الفوري</h3>
+                <span class="badge badge-gold">نظام حجز حي مباشر ⚡</span>
+            </div>
+
+            <form method="POST" id="travelBookingForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">نوع الحجز والخدمة:</label>
+                        <select name="travel_type" id="travelTypeSelect" class="form-input" onchange="updateTravelPricing()" style="background: rgba(255,255,255,0.08); color: #fff;">
+                            <option value="رحلة جوية ✈️">✈️ طيران ورحلات جوية وطيران خاص</option>
+                            <option value="رحلة برية / قطارات 🚌">🚌 رحلات برية، قطارات حافلات</option>
+                            <option value="رحلة بحرية / كروز 🚢">🚢 رحلات بحرية، عبارات، كروز</option>
+                            <option value="حجز فندقي / منتجع 🏨">🏨 فنادق، منتجعات، أجنحة فاخرة</option>
+                            <option value="رحلة عمرة وحج 🕋">🕋 باقات العمرة، الحج، والزيارة</option>
+                            <option value="رحلة علمية وجامعية 🎓">🎓 وفود جامعية ورحلات علمية</option>
+                            <option value="رحلة شركات ودورات 💼">💼 سياحة أعمال ودورات تدريبية</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">من (نقطة المغادرة / المدينة):</label>
+                        <input type="text" name="origin" id="originInput" class="form-input" value="الرياض" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">إلى (الوجهة / الفندق / المركز):</label>
+                        <input type="text" name="destination" id="destInput" class="form-input" value="جدة" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">تاريخ السفر / الإقامة:</label>
+                        <input type="date" name="travel_date" class="form-input" value="2026-08-01" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label">عدد المسافرين / أفراد الوفد:</label>
+                        <input type="number" name="passengers" id="passengersInput" min="1" max="100" class="form-input" value="1" onchange="updateTravelPricing()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">فئة الحجز والدرجة:</label>
+                        <select name="tier" id="tierSelect" class="form-input" onchange="updateTravelPricing()" style="background: rgba(255,255,255,0.08); color: #fff;">
+                            <option value="درجة رجال الأعمال 💼">درجة رجال الأعمال / VIP</option>
+                            <option value="الدرجة الملكية 👑">الدرجة الملكية السامية</option>
+                            <option value="الدرجة الاقتصادية 🎫">الدرجة الاقتصادية المريحة</option>
+                            <option value="باقة شاملة السكن والتدريب 🏨">باقة شاملة (سكن + تدريب + تنقل)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">المكتب / الوكالة المعتمدة:</label>
+                        <select name="agency_name" class="form-input" style="background: rgba(255,255,255,0.08); color: #fff;">
+                            <option value="وكالة الذئب الملكي المعتمدة ✅">وكالة الذئب الملكي للسفر ✅ (معتمد)</option>
+                            <option value="مكتب الحرمين للسياحة والعمرة ✅">مكتب الحرمين للحج والعمرة ✅ (معتمد)</option>
+                            <option value="وكالة الأفق العالمية للسياحة 🌐">وكالة الأفق الطيران والتنظيم 🌐 (معتمد)</option>
+                            <option value="شركة الوفود للتدريب والرحلات 💼">شركة الوفود لسياحة الأعمال 💼 (معتمد)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Price Quote & Escrow Calculation Display -->
+                <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(212,175,55,0.3); padding: 1.25rem; border-radius: 12px; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #9ca3af;">التكلفة الإجمالية المحتسبة تحت الضمان:</div>
+                        <div style="font-size: 1.6rem; font-weight: bold; color: #d4af37;" id="priceDisplaySAR">450 SAR</div>
+                        <div style="font-size: 0.75rem; color: #34d399;">مكافأة الجواهر المكتسبة: <strong id="cashbackBonus">22.5 💎</strong></div>
+                    </div>
+                    <input type="hidden" name="calculated_price" id="calculatedPriceInput" value="450">
+
+                    <button type="submit" class="btn btn-gold" style="width: auto; padding: 0.75rem 2rem; font-size: 1rem; min-height: 48px;">
+                        تأكيد الحجز وإطلاق التذكرة الرقمية 🎫🔒
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Catalog of Featured Packages & Agencies -->
+        <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: #f5e6c8; font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🌟 العروض والباقات الأكثر طلباً وموثوقية</span>
+            </h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                <!-- Package 1 -->
+                <div class="glass-card" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <span class="badge badge-gold">طيران جوي ✈️</span>
+                        <strong style="color: #34d399; font-size: 1.1rem;">450 SAR</strong>
+                    </div>
+                    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.4rem;">طيران الذئب الملكي (الرياض ↔ جدة)</h4>
+                    <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 0.8rem;">رحلة جوية مباشرة مع خدمة الضيافة الملكية وأمتعة 30 كجم.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #d1d5db; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.6rem;">
+                        <span>الوكيل: وكالة الذئب ✅</span>
+                        <button onclick="quickFillPackage('رحلة جوية ✈️', 'الرياض', 'جدة', 450, 'درجة رجال الأعمال 💼')" class="btn btn-blue" style="width: auto; padding: 0.3rem 0.75rem; font-size: 0.75rem;">حجز سريع ⚡</button>
+                    </div>
+                </div>
+
+                <!-- Package 2 -->
+                <div class="glass-card" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <span class="badge badge-green">باقة العمرة 🕋</span>
+                        <strong style="color: #34d399; font-size: 1.1rem;">1,850 SAR</strong>
+                    </div>
+                    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.4rem;">باقة العمرة الذهبية (برج الساعة مكة)</h4>
+                    <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 0.8rem;">إقامة 3 أيام مطلة على الحرم الشريف شاملة التنقلات والإفطار.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #d1d5db; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.6rem;">
+                        <span>الوكيل: مكتب الحرمين ✅</span>
+                        <button onclick="quickFillPackage('رحلة عمرة وحج 🕋', 'الرياض', 'مكة المكرمة', 1850, 'باقة شاملة السكن والتدريب 🏨')" class="btn btn-blue" style="width: auto; padding: 0.3rem 0.75rem; font-size: 0.75rem;">حجز سريع ⚡</button>
+                    </div>
+                </div>
+
+                <!-- Package 3 -->
+                <div class="glass-card" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <span class="badge badge-outline">إقامة فندقية 🏨</span>
+                        <strong style="color: #34d399; font-size: 1.1rem;">890 SAR / ليلة</strong>
+                    </div>
+                    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.4rem;">فندق قصر الذئب الملكي (دبي)</h4>
+                    <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 0.8rem;">جناح فندقي فاخر 5 نجوم مع إمكانية الوصول إلى صالة VIP وتسهيلات الأعمال.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #d1d5db; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.6rem;">
+                        <span>الوكيل: وكالة الأفق 🌐</span>
+                        <button onclick="quickFillPackage('حجز فندقي / منتجع 🏨', 'جدة', 'دبي', 890, 'الدرجة الملكية 👑')" class="btn btn-blue" style="width: auto; padding: 0.3rem 0.75rem; font-size: 0.75rem;">حجز سريع ⚡</button>
+                    </div>
+                </div>
+
+                <!-- Package 4 -->
+                <div class="glass-card" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <span class="badge badge-gold">رحلات علمية 🎓</span>
+                        <strong style="color: #34d399; font-size: 1.1rem;">3,500 SAR</strong>
+                    </div>
+                    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.4rem;">وفد جامعة الملك سعود العلمي (دبي)</h4>
+                    <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 0.8rem;">برنامج تبادل معرفي وزيارة للمختبرات والمؤتمرات التقنية لوفد من 5 طلاب.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #d1d5db; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.6rem;">
+                        <span>الوكيل: شركة الوفود 💼</span>
+                        <button onclick="quickFillPackage('رحلة علمية وجامعية 🎓', 'الرياض', 'دبي - مجمع المعرفة', 3500, 'باقة شاملة السكن والتدريب 🏨')" class="btn btn-blue" style="width: auto; padding: 0.3rem 0.75rem; font-size: 0.75rem;">حجز سريع ⚡</button>
+                    </div>
+                </div>
+
+                <!-- Package 5 -->
+                <div class="glass-card" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <span class="badge badge-green">تدريب شركات 💼</span>
+                        <strong style="color: #34d399; font-size: 1.1rem;">5,200 SAR</strong>
+                    </div>
+                    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.4rem;">برنامج القيادة التنفيذية للشركات (أنطاليا)</h4>
+                    <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 0.8rem;">دورة تدريبية متقدمة لمدة 5 أيام مع إقامة شاملة وورش عمل مكثفة.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #d1d5db; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.6rem;">
+                        <span>الوكيل: شركة الوفود 💼</span>
+                        <button onclick="quickFillPackage('رحلة شركات ودورات 💼', 'الرياض', 'أنطاليا - المجمع التدريبي', 5200, 'باقة شاملة السكن والتدريب 🏨')" class="btn btn-blue" style="width: auto; padding: 0.3rem 0.75rem; font-size: 0.75rem;">حجز سريع ⚡</button>
+                    </div>
+                </div>
+
+                <!-- Package 6 -->
+                <div class="glass-card" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <span class="badge badge-outline">رحلة بحرية 🚢</span>
+                        <strong style="color: #34d399; font-size: 1.1rem;">2,400 SAR</strong>
+                    </div>
+                    <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.4rem;">كروز البحر الأحمر الملكي (3 أيام)</h4>
+                    <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 0.8rem;">جولة بحرية فاخرة تنطلق من ميناء جدة الإسلامي ببرامج ترفيهية كاملة.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #d1d5db; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.6rem;">
+                        <span>الوكيل: وكالة الذئب ✅</span>
+                        <button onclick="quickFillPackage('رحلة بحرية / كروز 🚢', 'جدة - ميناء أبحر', 'الوجهات البحرية المفتوحة', 2400, 'الدرجة الملكية 👑')" class="btn btn-blue" style="width: auto; padding: 0.3rem 0.75rem; font-size: 0.75rem;">حجز سريع ⚡</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const basePrices = {{
+        'رحلة جوية ✈️': 450,
+        'رحلة برية / قطارات 🚌': 120,
+        'رحلة بحرية / كروز 🚢': 2400,
+        'حجز فندقي / منتجع 🏨': 890,
+        'رحلة عمرة وحج 🕋': 1850,
+        'رحلة علمية وجامعية 🎓': 3500,
+        'رحلة شركات ودورات 💼': 5200
+    }};
+
+    const tierMultipliers = {{
+        'درجة رجال الأعمال 💼': 1.0,
+        'الدرجة الملكية 👑': 1.6,
+        'الدرجة الاقتصادية 🎫': 0.6,
+        'باقة شاملة السكن والتدريب 🏨': 1.4
+    }};
+
+    function updateTravelPricing() {{
+        const type = document.getElementById('travelTypeSelect').value;
+        const pass = parseInt(document.getElementById('passengersInput').value) || 1;
+        const tier = document.getElementById('tierSelect').value;
+
+        const base = basePrices[type] || 450;
+        const mult = tierMultipliers[tier] || 1.0;
+
+        const total = Math.round(base * pass * mult);
+        const cashback = (total * 0.05).toFixed(1);
+
+        document.getElementById('priceDisplaySAR').innerText = total.toLocaleString() + ' SAR';
+        document.getElementById('calculatedPriceInput').value = total;
+        document.getElementById('cashbackBonus').innerText = cashback + ' 💎';
+    }}
+
+    function quickFillPackage(type, orig, dest, price, tier) {{
+        document.getElementById('travelTypeSelect').value = type;
+        document.getElementById('originInput').value = orig;
+        document.getElementById('destInput').value = dest;
+        document.getElementById('tierSelect').value = tier;
+        document.getElementById('passengersInput').value = 1;
+
+        updateTravelPricing();
+        window.scrollTo({{ top: 300, behavior: 'smooth' }});
+        showToastNotification('✈️', 'تعبئة الباقة', 'تم اختيار الباقة وتحديث التكلفة الفورية!');
+    }}
+    </script>
+    """
+    return render_layout("وكالة الذئب الرقمي للسفر والحجوزات", content, active_page="travel")
+
+@app.route("/api/v1/travel/book", methods=["POST"])
+def api_travel_book():
+    try:
+        data = request.get_json() or {}
+        travel_type = data.get("travel_type", "رحلة جوية")
+        origin = data.get("origin", "الرياض")
+        destination = data.get("destination", "جدة")
+        passengers = int(data.get("passengers", 1))
+        price_sar = float(data.get("price_sar", 450))
+
+        escrow_id = f"ESC-TRV-{random.randint(100000, 999999)}"
+        ticket_ref = f"RFQ-TRV-{random.randint(1000, 9999)}"
+
+        return jsonify({
+            "success": True,
+            "message": "تم حجز الرحلة بنجاح تحت حماية الضمان المالي 🔒",
+            "escrow_id": escrow_id,
+            "ticket_ref": ticket_ref,
+            "details": {
+                "travel_type": travel_type,
+                "origin": origin,
+                "destination": destination,
+                "passengers": passengers,
+                "total_price_sar": price_sar,
+                "vip_cashback_gems": round(price_sar * 0.05, 1)
+            }
+        }), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
 
 @app.route("/health", methods=["GET"])
 def health():
