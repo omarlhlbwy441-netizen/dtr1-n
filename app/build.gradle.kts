@@ -96,8 +96,8 @@ dependencies {
   implementation(libs.coil.compose)
   implementation(libs.converter.moshi)
   implementation(libs.firebase.ai)
-  // Uncomment to use Firestore:
-  // implementation(libs.firebase.firestore)
+  // Cloud Firestore
+  implementation(libs.firebase.firestore)
 
   // Firebase Auth with Google Sign-In
   implementation(libs.firebase.auth)
