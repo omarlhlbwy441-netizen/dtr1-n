@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.data.Booking
 import com.example.data.TravelBookingEntity
 import com.example.ui.theme.*
 import java.text.SimpleDateFormat
@@ -44,8 +45,8 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingForm(
-    savedBookings: List<TravelBookingEntity>,
-    onSaveBooking: (TravelBookingEntity) -> Unit,
+    savedBookings: List<Booking>,
+    onSaveBooking: (Booking) -> Unit,
     onDeleteBooking: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -491,7 +492,7 @@ fun BookingForm(
                     focusManager.clearFocus()
                     val escrowCode = "ESC-ROOM-${Random.nextInt(100000, 999999)}"
                     val ticketCode = "RFQ-TRV-${Random.nextInt(1000, 9999)}"
-                    val newEntity = TravelBookingEntity(
+                    val newEntity = Booking(
                         origin = origin.ifBlank { "الرياض" },
                         destination = destination.ifBlank { "جدة" },
                         travelDate = travelDate,
@@ -661,7 +662,7 @@ fun BookingForm(
 
 @Composable
 fun SavedBookingItemCard(
-    booking: TravelBookingEntity,
+    booking: Booking,
     onDelete: () -> Unit
 ) {
     Card(

@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.AppDatabase
-import com.example.data.TravelBookingEntity
-import com.example.data.TravelBookingRepository
+import com.example.data.Booking
+import com.example.data.BookingRepository
 import com.example.ui.model.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -81,7 +81,7 @@ data class RafeeqUiState(
         WalletTransaction("t2", "مزايدة ناجحة", 350.0, "2026-07-24 18:10", "مكتمل"),
         WalletTransaction("t3", "سحب إلى STC Pay", -500.0, "2026-07-23 09:15", "معالج")
     ),
-    val savedTravelBookings: List<TravelBookingEntity> = emptyList(),
+    val savedTravelBookings: List<Booking> = emptyList(),
     val isAiAssistantOpen: Boolean = false,
     val aiMessages: List<AiChatMessage> = listOf(
         AiChatMessage("أهلاً بك في رفيق الذكي! كيف يمكنني مساعدتك اليوم في إدارة مبيعاتك وعمولاتك؟", isFromUser = false)
@@ -90,14 +90,14 @@ data class RafeeqUiState(
 )
 
 class RafeeqViewModel(application: Application) : AndroidViewModel(application) {
-    private val travelRepository: TravelBookingRepository
+    private val travelRepository: BookingRepository
 
     private val _uiState = MutableStateFlow(RafeeqUiState())
     val uiState: StateFlow<RafeeqUiState> = _uiState.asStateFlow()
 
     init {
         val database = AppDatabase.getDatabase(application)
-        travelRepository = TravelBookingRepository(database.travelBookingDao())
+        travelRepository = BookingRepository(database.bookingDao())
 
         // Collect Room Database Flow reactively
         viewModelScope.launch {
@@ -107,7 +107,7 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun saveTravelBooking(booking: TravelBookingEntity) {
+    fun saveTravelBooking(booking: Booking) {
         viewModelScope.launch {
             travelRepository.saveBooking(booking)
             _uiState.update {
