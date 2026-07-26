@@ -10,6 +10,7 @@ import com.example.ui.model.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -99,28 +100,44 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
         val database = AppDatabase.getDatabase(application)
         travelRepository = BookingRepository(database.bookingDao())
 
-        // Collect Room Database Flow reactively
+        // Collect Room Database Flow reactively with exception handling
         viewModelScope.launch {
-            travelRepository.allBookings.collect { bookings ->
-                _uiState.update { it.copy(savedTravelBookings = bookings) }
-            }
+            travelRepository.allBookings
+                .catch { e ->
+                    _uiState.update { it.copy(userNotificationMessage = "خطأ في تحميل الحجوزات: ${e.localizedMessage}") }
+                }
+                .collect { bookings ->
+                    _uiState.update { it.copy(savedTravelBookings = bookings) }
+                }
         }
     }
 
     fun saveTravelBooking(booking: Booking) {
         viewModelScope.launch {
-            travelRepository.saveBooking(booking)
-            _uiState.update {
-                it.copy(userNotificationMessage = "تم حفظ الحجز بنجاح في قاعدة البيانات Room 💾!")
+            try {
+                travelRepository.saveBooking(booking)
+                _uiState.update {
+                    it.copy(userNotificationMessage = "تم حفظ الحجز بنجاح في قاعدة البيانات Room 💾!")
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(userNotificationMessage = "تعذر حفظ الحجز: ${e.localizedMessage ?: "خطأ غير معروف"}")
+                }
             }
         }
     }
 
     fun deleteTravelBooking(id: Long) {
         viewModelScope.launch {
-            travelRepository.deleteBooking(id)
-            _uiState.update {
-                it.copy(userNotificationMessage = "تم حذف الحجز من قاعدة البيانات Room.")
+            try {
+                travelRepository.deleteBooking(id)
+                _uiState.update {
+                    it.copy(userNotificationMessage = "تم حذف الحجز من قاعدة البيانات Room.")
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(userNotificationMessage = "تعذر حذف الحجز: ${e.localizedMessage ?: "خطأ غير معروف"}")
+                }
             }
         }
     }
