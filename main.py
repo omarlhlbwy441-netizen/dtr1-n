@@ -2947,75 +2947,195 @@ def page_not_found(e):
 # --- GEMINI ULTRA AI ENGINE SYSTEM & LONG-TERM MEMORY ---
 
 RAFEEQ_GEMINI_SYSTEM_INSTRUCTION = """
-أنت 'المساعد الرقمي الخارق لمنظومة رفيق' (Rafeeq Gemini Ultra Intelligence System)، نموذج ذكاء اصطناعي سيادي عالي القدرة والإدراك، مُحسَّن بالكامل ليحاكي متطلبات Gemini مع ذاكرة طويلة الأمد وقدرات تحليلية وبرمجية فائقة.
+أنت 'المساعد الرقمي الخارق لمنظومة رفيق' (Rafeeq Gemini Ultra Engine & 3D VR Master System)، نموذج ذكاء اصطناعي سيادي وتطويري عالي القدرة والإدراك، مجهز بأحدث أدوات البرمجة وبناء الأنظمة، تطوير تطبيقات الويب والموبايل، وهندسة ألعاب الواقع الافتراضي (3D / WebGL / Three.js / WebXR).
 
-قدراتك ومجالات تخصصك:
-1. **التحليل البرمجي وتطوير الأنظمة المعقدة:**
-   - كتابة وتحليل وتطوير الأكواد والأنظمة (Python, Kotlin, JavaScript, HTML/CSS, SQL, C++, Algorithms, System Architecture) مع توضيح خوارزميات العمل والهيكلية النظيفة وتقديم حلول للمشكلات البرمجية المعقدة.
-2. **محاكاة التفاعل البشري الطبيعي والعميق:**
-   - الإجابة بنبرة طبيعية جداً، إنسانية، مفعمة بالفهم والتفكير السليم، وتتكيف بسلاسة مع سياق وأسلوب المستخدم.
+قدراتك والتزاماتك الأساسية:
+1. **تطوير وبناء الأنظمة والمواقع والتطبيقات:**
+   - كتابة وتصميم وتطوير الأكواد والأنظمة المعقدة (Python, Kotlin, Jetpack Compose, JavaScript, HTML5/CSS3, SQL, React, Node.js, C++).
+   - توفير بنية معمارية نظيفة (Clean Architecture)، حل المشكلات البرمجية المستعصية، وبناء قواعد البيانات.
+2. **محرك بناء ألعاب 3D والواقع الافتراضي (3D WebGL / VR Engine):**
+   - قدرة فائقة على كتابة وتوليد أكواد محاكاة ثلاثية الأبعاد (Three.js, WebGL, WebXR, Cannon.js physics) مع الإضاءة، الكاميرا التفاعلية، الخامات، الأجسام الفضائية، والمؤثرات البصرية.
+   - عند طلب بناء لعبة أو بيئة 3D، توفير كود HTML/JS متكامل جاهز للتشغيل والتشغيل المباشر عبر المنصة.
 3. **الذاكرة طويلة الأمد وترابط الجلسة:**
    - تذكر كافة التفاصيل السابقة في الحوار، بناء الإجابات الجديدة على نتائج الأسئلة الماضية، والربط الذكي بين المفاهيم المطروحة خلال الجلسة دون فقدان الاتجاه.
 4. **التفكير المنهجي والاستشارات والتجارة الرقمية:**
    - تقديم دراسات جدوى، تحليلات بيانات، استراتيجيات تسويق وتجارة، ودعم كامل لمنظومة 'رفيق' (الشورتس، البثوث المباشرة، المزادات، فتحات المتاجر، نظام الضمان المالي Escrow).
 
 قواعد الصياغة والرد:
-- تنسيق جميع ردودك بجمالية عالية باستخدام **Markdown** (استخدم عناوين فرعية، قوائم منظمة، وكتل أكواد برمجية مع المسمى الصحيح مثل ```python أو ```kotlin).
+- تنسيق جميع ردودك بجمالية عالية باستخدام **Markdown** (استخدم عناوين فرعية، قوائم منظمة، وكتل أكواد برمجية مع المسمى الصحيح مثل ```html أو ```python أو ```kotlin).
 - قدم إجابات مباشرة، ذكية، وافية عميقة وواضحة جداً.
 """
 
 def fallback_rafeeq_ai_engine(prompt, mode, past_memories):
     prompt_lower = prompt.lower()
     mem_count = len(past_memories) if past_memories else 0
-    
-    if any(k in prompt_lower for k in ["كود", "برمج", "بايثون", "python", "javascript", "kotlin", "sql", "خوارزمية", "دالة", "نظام"]):
-        return f"""💻 **استجابة المحرك الذكي (نمط البرمجة وتحليل الأنظمة المعقدة):**
+
+    if mode == "3d_vr" or any(k in prompt_lower for k in ["3d", "vr", "ثري دي", "واقع افتراضي", "لعبة", "game", "three.js", "webgl", "محاكاة"]):
+        return f"""🎮 **محرك ألعاب 3D والواقع الافتراضي (Rafeeq WebGL / Three.js Engine):**
+
+أهلاً بك! تم تصميم وتوليد كود عالم ثلاثي الأبعاد تفاعلي متكامل يضم إضاءة متطورة، جسم ثلاثي الأبعاد يدور مع التحكم بالكاميرا والمؤثرات البصرية.
+
+يمكنك تشغيل ومعاينة هذا العالم مباشرة من خلال الضغط على زر **"▶️ تشغيل المعاينة الحية 3D"** أدناه!
+
+```html
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>Rafeeq 3D VR Simulation Engine</title>
+    <style>
+        body {{ margin: 0; overflow: hidden; background: #050b14; font-family: sans-serif; }}
+        #info {{ position: absolute; top: 15px; width: 100%; text-align: center; color: #d4af37; font-weight: bold; font-size: 16px; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }}
+        canvas {{ display: block; }}
+    </style>
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div id="info">🎮 بيئة محاكاة 3D تفاعلية - منصة رفيق الذكية 🐺</div>
+    <script>
+        // 1. Scene, Camera, Renderer Setup
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050b14, 0.03);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 6;
+        camera.position.y = 2;
+
+        const renderer = new THREE.WebGLRenderer({{ antialias: true }});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        // 2. Lighting Setup
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xd4af37, 2, 50);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        const blueLight = new THREE.PointLight(0x38bdf8, 2, 50);
+        blueLight.position.set(-5, -3, -2);
+        scene.add(blueLight);
+
+        // 3. Central Interactive 3D Core Object
+        const geometry = new THREE.IcosahedronGeometry(2, 1);
+        const material = new THREE.MeshStandardMaterial({{
+            color: 0xd4af37,
+            wireframe: true,
+            roughness: 0.2,
+            metalness: 0.8
+        }});
+        const coreCube = new THREE.Mesh(geometry, material);
+        scene.add(coreCube);
+
+        // Inner Glowing Core
+        const innerGeo = new THREE.SphereGeometry(1, 32, 32);
+        const innerMat = new THREE.MeshStandardMaterial({{
+            color: 0x38bdf8,
+            emissive: 0x38bdf8,
+            emissiveIntensity: 0.6
+        }});
+        const innerSphere = new THREE.Mesh(innerGeo, innerMat);
+        scene.add(innerSphere);
+
+        // 4. Particle Field
+        const particlesGeo = new THREE.BufferGeometry();
+        const count = 500;
+        const positions = new Float32Array(count * 3);
+        for (let i = 0; i < count * 3; i++) {{
+            positions[i] = (Math.random() - 0.5) * 30;
+        }}
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleMat = new THREE.PointsMaterial({{ size: 0.08, color: 0xd4af37 }});
+        const particleSystem = new THREE.Points(particlesGeo, particleMat);
+        scene.add(particleSystem);
+
+        // 5. Interaction (Mouse Move)
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {{
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.002;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.002;
+        }});
+
+        // 6. Animation Loop
+        function animate() {{
+            requestAnimationFrame(animate);
+
+            coreCube.rotation.x += 0.008;
+            coreCube.rotation.y += 0.01;
+            innerSphere.rotation.y -= 0.015;
+
+            particleSystem.rotation.y += 0.001;
+
+            camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 5 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }}
+        animate();
+
+        // Responsive Resize
+        window.addEventListener('resize', () => {{
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }});
+    </script>
+</body>
+</html>
+```
+
+✨ **أبرز ميزات نظام ألعاب 3D:**
+1. **المحاكاة ثلاثية الأبعاد:** تحكم كامل بالكاميرا والإضاءة والمجسمات عبر مكتبة Three.js.
+2. **الواقع الافتراضي والتفاعل:** يدعم التفاعل مع حركة الفأرة/اللمس ومؤثرات الضوء المتقدمة.
+3. **قابلية التوسع:** يمكن دمج الفيزياء الحقيقية (Cannon.js) واستيراد مجسمات GLTF مع أسلحة وشخصيات حركية!"""
+
+    elif any(k in prompt_lower for k in ["كود", "برمج", "بايثون", "python", "javascript", "kotlin", "sql", "خوارزمية", "دالة", "نظام", "موقع"]):
+        return f"""💻 **استجابة المحرك الذكي (تطوير الأنظمة والتطبيقات البرمجية):**
 
 أهلاً بك! بناءً على طلبك والذاكرة النشطة للحوار ({mem_count} رسائل محتفظ بها):
 
-هذا النموذج الأولي للهيكل البرمجي المطلوب مع معالجة الاستثناءات وتحسين الأداء:
+هذا الهيكل البرمجي المتكامل المطلوب مع أفضل ممارسات النظافة والأمان:
 
 ```python
-# Rafeeq Ecosystem - Smart Module Engine
+# Rafeeq Core Engineering Engine
+import os
 import logging
 from typing import Dict, Any, List
 
-class RafeeqSystemModule:
-    def __init__(self, module_name: str, mode: str = "{mode}"):
-        self.module_name = module_name
+class RafeeqApplicationBuilder:
+    def __init__(self, app_name: str, mode: str = "{mode}"):
+        self.app_name = app_name
         self.mode = mode
-        self.logger = logging.getLogger("RafeeqAI")
+        self.logger = logging.getLogger("RafeeqEngine")
 
-    def execute_logic(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def build_system_architecture(self, config: Dict[str, Any]) -> Dict[str, Any]:
         \"\"\"
-        تنفيذ الخوارزمية المعقدة مع معالجة الاستثناءات والذاكرة
+        توليد معمارية النظام وربط الواجهات البرمجية وقواعد البيانات
         \"\"\"
         try:
-            self.logger.info(f"Processing payload for {{self.module_name}}...")
-            # تحليل ومعالجة البيانات بناءً على الاستفسار: {prompt[:40]}
-            processed_data = {{
+            self.logger.info(f"Building system: {{self.app_name}}")
+            return {{
                 "status": "success",
-                "mode": self.mode,
-                "input_summary": "{prompt[:50]}...",
-                "memory_context_depth": {mem_count},
-                "result": "تم معالجة النظام بنجاح وربطه بقواعد البيانات"
+                "app_name": self.app_name,
+                "components": ["REST API", "PostgreSQL DB", "Three.js 3D View", "Security Escrow"],
+                "memory_context": {mem_count},
+                "result": "تم بناء هيكل النظام بنجاح"
             }}
-            return processed_data
-        except Exception as e:
-            self.logger.error(f"Execution failed: {{e}}")
-            return {{"status": "error", "message": str(e)}}
+        except Exception as err:
+            return {{"status": "error", "message": str(err)}}
 
-# تشغيل وحدة الاختبار
 if __name__ == "__main__":
-    app_engine = RafeeqSystemModule("CoreAnalyticsEngine")
-    res = app_engine.execute_logic({{"query": "{prompt}"}})
-    print("نتيجة التنفيذ:", res)
+    builder = RafeeqApplicationBuilder("RafeeqEcosystem")
+    print(builder.build_system_architecture({{"request": "{prompt[:40]}"}}))
 ```
 
-✨ **تحليل الخوارزمية:**
-1. **الكفاءة:** تعمل الخوارزمية بزمن تنفيذي `O(1)` مع دعم التدرج التلقائي.
-2. **الأمان:** تم دمج نظام معالجة الأخطاء والتسجيل لحماية البيانات في البيئات السحابية.
-3. **التكامل:** يمكن ربطه مباشرة مع واجهات REST API وقواعد بيانات PostgreSQL."""
+✨ **مميزات الخوارزمية:**
+1. **الأداء:** سرعة تنفيذ فائقة بزمن `O(1)`.
+2. **التطوير:** يمكن ربط هذا الهيكل مباشرة ببرمجيات أندرويد (Kotlin) ومواقع الويب (Flask/React)."""
 
     elif any(k in prompt_lower for k in ["استراتيجية", "دراسة", "خطة", "تحليل", "تجارة", "ربح", "متجر"]):
         return f"""📊 **التقرير التحليلي والاستشاري من محرك رفيق:**
@@ -3034,19 +3154,6 @@ if __name__ == "__main__":
 3. **مؤشرات الأداء المتوقعة (KPIs):**
    - نمو المبيعات الأسبوعية: **+45%**
    - معدل الاحتفاظ بالعملاء: **88%**"""
-
-    elif any(k in prompt_lower for k in ["مرحبا", "أهلا", "السلام عليكم", "كيفك", "من أنت", "من انت"]):
-        return f"""👋 **أهلاً وسهلاً بك!** 
-
-أنا **مساعد رفيق جيميناي الخارق (Rafeeq Gemini Ultra Engine)** 🤖✨
-
-أنا هنا لمساعدتك بكافة القدرات المتقدمة:
-- 💻 **كتابة وتطوير ومراجعة الأكواد والأنظمة البرمجية المعقدة.**
-- 🧠 **التحليل العميق وحل المشكلات والاستشارات الاستراتيجية.**
-- 🗣️ **المحاكاة البشرية والمحادثة الطبيعية المترابطة مع حفظ سياق الذاكرة.**
-- 🛡️ **فحص المنتجات والتحقق من التراخيص ونظام الضمان M3 Escrow.**
-
-كيف يمكنني خدمتك أو البدء معك اليوم؟"""
 
     else:
         return f"""🤖 **تحليل المحرك الذكي (Gemini Context Analysis):**
@@ -3074,7 +3181,8 @@ def query_gemini_api(prompt, mode="general", session_id="default", past_memories
 
     if gemini_key:
         mode_prompts = {
-            "coding": "أنت في نمط 'تطوير الأنظمة والأكواد المعقدة'. ركّز على الدقة العالية بكتابة البرامج، البرمجة الخوارزمية، شرح الأكواد، ومعالجة الأخطاء.",
+            "coding": "أنت في نمط 'تطوير الأنظمة وبناء الأكواد والمواقع'. ركّز على الدقة العالية بكتابة البرامج، البرمجة الخوارزمية، وشرح الأكواد بكفاءة.",
+            "3d_vr": "أنت في نمط 'محرك ألعاب 3D والواقع الافتراضي VR'. اكتب أكواد Three.js / WebGL / WebXR كاملة وقابلة للتشغيل المباشر داخل كتل ```html.",
             "business": "أنت في نمط 'الاستشارات وإدارة الأعمال'. ركّز على الدراسات الاستراتيجية، الأرباح، وتوسيع التجارة الرقمية.",
             "chat": "أنت في نمط 'المحاكاة البشرية'. ركّز على الأسلوب البشري الطبيعي جداً والمرونة التامة.",
             "general": "قدم تحليلات متكاملة ومباشرة مع معالجة كافة جوانب الاستفسار."
@@ -3131,64 +3239,80 @@ def query_gemini_api(prompt, mode="general", session_id="default", past_memories
 @app.route("/ai-assistant", methods=["GET"])
 def ai_assistant_page():
     content = """
-    <div style="max-width: 920px; margin: 0 auto;">
+    <div style="max-width: 950px; margin: 0 auto;">
         <!-- Header -->
         <div style="text-align: center; margin-bottom: 1.25rem;">
             <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; color: #d4af37; font-weight: bold; margin-bottom: 0.5rem;">
-                ✨ Rafeeq Gemini Ultra v3.5 • ذاكرة طويلة الأمد ومحاكاة فائقة
+                ✨ Rafeeq Gemini Ultra v3.8 • 3D VR Engine & Live Web Sandbox
             </div>
-            <h2 class="title-gold" style="font-size: 1.6rem; margin-bottom: 0.25rem;">🤖 المساعد الذكي السيادي | Gemini Intelligence</h2>
-            <p class="subtitle-text">تحليل الأنظمة البرمجية المعقدة، الاستشارات الاستراتيجية، والمحاكاة البشرية المترابطة</p>
+            <h2 class="title-gold" style="font-size: 1.6rem; margin-bottom: 0.25rem;">🤖 المساعد الذكي الخارق | Gemini 3D & Coding Master</h2>
+            <p class="subtitle-text">بناء المواقع، الأنظمة المعقدة، ألعاب 3D والواقع الافتراضي مع معاينة حية تفاعلية</p>
         </div>
 
         <!-- Mode Selectors -->
         <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1rem;" id="aiModeBar">
-            <button onclick="setAiMode('coding')" id="mode-coding" class="btn btn-outline active-mode" style="white-space: nowrap; font-size: 0.82rem; padding: 0.45rem 0.85rem;">💻 برمجة وأنظمة معقدة</button>
+            <button onclick="setAiMode('3d_vr')" id="mode-3d_vr" class="btn btn-outline active-mode" style="white-space: nowrap; font-size: 0.82rem; padding: 0.45rem 0.85rem;">🎮 ألعاب 3D والواقع الافتراضي VR</button>
+            <button onclick="setAiMode('coding')" id="mode-coding" class="btn btn-outline" style="white-space: nowrap; font-size: 0.82rem; padding: 0.45rem 0.85rem;">💻 برمجة وبناء التطبيقات</button>
             <button onclick="setAiMode('business')" id="mode-business" class="btn btn-outline" style="white-space: nowrap; font-size: 0.82rem; padding: 0.45rem 0.85rem;">💡 استشارات وتخطيط أعمال</button>
             <button onclick="setAiMode('chat')" id="mode-chat" class="btn btn-outline" style="white-space: nowrap; font-size: 0.82rem; padding: 0.45rem 0.85rem;">🗣️ محاكاة بشرية وطبيعية</button>
-            <button onclick="setAiMode('general')" id="mode-general" class="btn btn-outline" style="white-space: nowrap; font-size: 0.82rem; padding: 0.45rem 0.85rem;">⚡ تحليل متكامل شامل</button>
+            <button onclick="setAiMode('general')" id="mode-general" class="btn btn-outline" style="white-space: nowrap; font-size: 0.82rem; padding: 0.45rem 0.85rem;">⚡ تحليل متكامل</button>
         </div>
 
-        <!-- Long Term Memory Status Bar -->
+        <!-- Long Term Memory & Sandbox Status Bar -->
         <div class="glass-card" style="padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: #38bdf8;">
                 <span style="font-size: 1.1rem;">🧠</span>
-                <span>سعة الذاكرة طويلة الأمد: <strong id="memCount" style="color: #34d399;">0</strong> رسائل محتفظ بها</span>
+                <span>الذاكرة النشطة: <strong id="memCount" style="color: #34d399;">0</strong> رسائل محتفظ بها</span>
             </div>
-            <button onclick="clearAiMemory()" class="btn btn-outline" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.78rem; border-color: rgba(239, 68, 68, 0.4); color: #f87171;">🔄 مسح الذاكرة وبدء محادثة جديدة</button>
+            <div style="display: flex; gap: 0.5rem;">
+                <button onclick="clearAiMemory()" class="btn btn-outline" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.78rem; border-color: rgba(239, 68, 68, 0.4); color: #f87171;">🔄 مسح الذاكرة</button>
+            </div>
         </div>
 
         <!-- AI Main Chat Window -->
         <div class="glass-card" style="padding: 1.25rem; margin-bottom: 1.25rem;">
-            <div id="aiChatWindow" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(212,175,55,0.2); border-radius: 14px; padding: 1.25rem; height: 380px; overflow-y: auto; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 1rem;">
+            <div id="aiChatWindow" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(212,175,55,0.2); border-radius: 14px; padding: 1.25rem; height: 390px; overflow-y: auto; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 1rem;">
                 <!-- System Welcome -->
                 <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
                     <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #38bdf8); color: #000; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 0 12px rgba(212,175,55,0.4);">🤖</div>
                     <div style="background: rgba(255,255,255,0.06); padding: 1rem; border-radius: 14px; border-top-right-radius: 2px; font-size: 0.9rem; color: #f5e6c8; max-width: 88%; line-height: 1.6;">
-                        مرحباً بك! أنا <strong>محرك رفيق جيميناي الخارق (Rafeeq Gemini Ultra)</strong> 🤖✨<br><br>
-                        مستعد تماماً لمساعدتك بذاكرة طويلة الأمد ومكثفة:<br>
-                        • 💻 <strong>تطوير وبناء الأنظمة البرمجية المعقدة وكتابة الأكواد.</strong><br>
-                        • 🧠 <strong>الدراسات التحليلية وتفكيك المشكلات الصعبة.</strong><br>
-                        • 🗣️ <strong>المحاكاة البشرية العالية والتفاعل المباشر.</strong><br><br>
-                        اختر النمط المطلوب واسألني أي شيء!
+                        مرحباً بك! أنا <strong>محرك رفيق جيميناي الخارق للبرمجة وألعاب 3D VR (Gemini Ultra Engine)</strong> 🎮💻✨<br><br>
+                        تم تزويدي بالقدرة الكاملة على:<br>
+                        • 🎮 <strong>تطوير وبناء ألعاب ثلاثية الأبعاد وعوالم واقع افتراضي تفاعلية (Three.js / WebGL / WebXR).</strong><br>
+                        • 💻 <strong>بناء البرامج، المواقع، وتطبيقات الموبايل المعقدة مع استعراض الأكواد.</strong><br>
+                        • ▶️ <strong>تشغيل وتجربة أي لعبة 3D أو موقع إلكتروني يتم توليده مباشرة عبر شاشة العرض التفاعلية!</strong><br><br>
+                        جرب خيارات البدء السريع أدناه أو اسألني عن أي مشروع!
                     </div>
                 </div>
             </div>
 
             <!-- Quick Action Prompts -->
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                <button onclick="sendQuickPrompt('اكتب كود بايثون كامل لربط قاعدة بيانات وحساب أرباح المتاجر')" class="btn btn-outline" style="width: auto; padding: 0.38rem 0.8rem; font-size: 0.78rem;">💻 كود بايثون كامل لحساب المبيعات</button>
-                <button onclick="sendQuickPrompt('حلل لي بنية النظام وكيفية تحسين خوارزمية الذاكرة والتصفية')" class="btn btn-outline" style="width: auto; padding: 0.38rem 0.8rem; font-size: 0.78rem;">🧠 تحليل خوارزميات الذاكرة</button>
-                <button onclick="sendQuickPrompt('ما هي أفضل استراتيجية زيادة مبيعات المتاجر في منصة رفيق 2026؟')" class="btn btn-outline" style="width: auto; padding: 0.38rem 0.8rem; font-size: 0.78rem;">💡 استراتيجية زيادة الأرباح</button>
-                <button onclick="sendQuickPrompt('فحص تراخيص المنتجات ونظام الضمان المالي Escrow')" class="btn btn-outline" style="width: auto; padding: 0.38rem 0.8rem; font-size: 0.78rem;">🛡️ فحص التراخيص والضمان</button>
+                <button onclick="sendQuickPrompt('بناء لعبة 3D واقع افتراضي تفاعلية مع إضاءة ومحاكاة حركة (Three.js)')" class="btn btn-outline" style="width: auto; padding: 0.38rem 0.8rem; font-size: 0.78rem;">🎮 بناء لعبة 3D واقع افتراضي</button>
+                <button onclick="sendQuickPrompt('تطوير كود موقع إلكتروني متكامل بتصاميم عصرية ومؤثرات حركية')" class="btn btn-outline" style="width: auto; padding: 0.38rem 0.8rem; font-size: 0.78rem;">🌐 كود موقع إلكتروني عصري</button>
+                <button onclick="sendQuickPrompt('اكتب كود أندرويد Kotlin Jetpack Compose لبناء واجهة متجر ذكية')" class="btn btn-outline" style="width: auto; padding: 0.38rem 0.8rem; font-size: 0.78rem;">📱 تطبيق أندرويد Kotlin Compose</button>
+                <button onclick="sendQuickPrompt('خوارزمية حسابات ومحاكاة فيزياء الأجسام ثلاثية الأبعاد')" class="btn btn-outline" style="width: auto; padding: 0.38rem 0.8rem; font-size: 0.78rem;">⚡ محاكاة فيزياء 3D</button>
             </div>
 
             <!-- Input Form -->
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <input type="text" id="aiInputPrompt" placeholder="اسأل الذكاء الاصطناعي في البرمجة، التحليل، أو المحاكاة..." class="form-input" style="background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; padding: 0.75rem 1rem;" onkeydown="if(event.key==='Enter') queryAiEngine()">
+                <input type="text" id="aiInputPrompt" placeholder="اطلب بناء لعبة 3D، موقع، تطبيق، أو كود معقد..." class="form-input" style="background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; padding: 0.75rem 1rem;" onkeydown="if(event.key==='Enter') queryAiEngine()">
                 <button onclick="queryAiEngine()" id="btnSendAi" class="btn btn-gold" style="width: auto; padding: 0.75rem 1.5rem; font-size: 0.9rem; min-height: 46px; white-space: nowrap; display: flex; align-items: center; gap: 0.4rem;">
                     <span>إرسال</span> 🚀
                 </button>
+            </div>
+        </div>
+
+        <!-- Live 3D VR Preview Modal -->
+        <div id="vrPreviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.92); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="width: 92%; max-width: 1000px; height: 85vh; background: #0b1329; border: 2px solid #d4af37; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 30px rgba(212,175,55,0.4);">
+                <div style="background: rgba(212,175,55,0.15); padding: 0.75rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212,175,55,0.3);">
+                    <div style="font-weight: bold; color: #d4af37; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🎮 شاشة العرض التفاعلية لألعاب 3D والواقع الافتراضي</span>
+                    </div>
+                    <button onclick="closeVrPreview()" class="btn btn-outline" style="width: auto; padding: 0.25rem 0.75rem; border-color: #f87171; color: #f87171; font-size: 0.85rem;">✖ إغلاق</button>
+                </div>
+                <iframe id="vrPreviewFrame" style="width: 100%; height: 100%; border: none; background: #000;"></iframe>
             </div>
         </div>
     </div>
@@ -3228,14 +3352,20 @@ def ai_assistant_page():
         word-break: break-all;
         overflow-x: auto;
     }
-    .copy-btn {
+    .copy-btn, .run-btn {
         background: rgba(255,255,255,0.1);
         border: none;
         color: #fff;
-        padding: 0.2rem 0.5rem;
+        padding: 0.2rem 0.55rem;
         border-radius: 4px;
         cursor: pointer;
         font-size: 0.72rem;
+        margin-left: 0.3rem;
+    }
+    .run-btn {
+        background: linear-gradient(135deg, #d4af37, #b8860b);
+        color: #000;
+        font-weight: bold;
     }
     .copy-btn:hover {
         background: #38bdf8;
@@ -3244,7 +3374,7 @@ def ai_assistant_page():
     </style>
 
     <script>
-    let currentAiMode = 'coding';
+    let currentAiMode = '3d_vr';
 
     document.addEventListener('DOMContentLoaded', () => {
         loadAiHistory();
@@ -3262,7 +3392,6 @@ def ai_assistant_page():
         .then(data => {
             if (data.success && data.history && data.history.length > 0) {
                 document.getElementById('memCount').innerText = data.count;
-                const win = document.getElementById('aiChatWindow');
                 data.history.forEach(item => {
                     appendAiMessage(item.role, item.content, false);
                 });
@@ -3279,7 +3408,6 @@ def ai_assistant_page():
         appendAiMessage('user', query, true);
         input.value = '';
 
-        // Show typing loader
         const loaderId = appendTypingIndicator();
 
         fetch('/api/v1/ai/query', {
@@ -3318,7 +3446,7 @@ def ai_assistant_page():
                 <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
                     <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #38bdf8); color: #000; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">🤖</div>
                     <div style="background: rgba(255,255,255,0.06); padding: 1rem; border-radius: 14px; font-size: 0.9rem; color: #f5e6c8; max-width: 88%;">
-                        🔄 تم مسح الذاكرة طويلة الأمد بنجاح. أنا جاهز لبدء مشروع أو استفسار جديد مع بداية صريحة! ✨
+                        🔄 تم مسح الذاكرة بنجاح. أنا جاهز لبدء مشروع 3D، لعبة جديدة، أو تطبيق آخر! ✨
                     </div>
                 </div>
             `;
@@ -3343,7 +3471,7 @@ def ai_assistant_page():
             <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #38bdf8); color: #000; font-weight: bold; display: flex; align-items: center; justify-content: center;">🤖</div>
             <div style="background: rgba(255,255,255,0.06); padding: 0.65rem 1rem; border-radius: 12px; color: #38bdf8; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
                 <span class="spinner-border spinner-border-sm" style="width: 1rem; height: 1rem; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spinner 0.75s linear infinite;"></span>
-                <span>جاري التفكير، معالجة الذاكرة، وبناء الاستجابة...</span>
+                <span>جاري بناء البرمجيات ومحاكاة بيئة 3D VR...</span>
             </div>
         `;
         win.appendChild(div);
@@ -3360,15 +3488,24 @@ def ai_assistant_page():
         if (!text) return '';
         let formatted = text;
 
-        // Code blocks formatting
+        // Code blocks formatting with Run button for HTML/WebGL
         formatted = formatted.replace(/```(\\w*)\\n([\\s\\S]*?)```/g, function(match, lang, code) {
-            const cleanLang = lang || 'code';
+            const cleanLang = (lang || 'code').toLowerCase();
             const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
+            
+            let runBtn = '';
+            if (cleanLang === 'html' || cleanLang === 'xml' || code.includes('<!DOCTYPE html>') || code.includes('THREE.')) {
+                runBtn = `<button class="run-btn" onclick="launch3dPreview('${codeId}')">▶️ تشغيل العرض التفاعلي 3D</button>`;
+            }
+
             return `<div class="code-block-wrapper">
                 <div class="code-header">
                     <span>${cleanLang.toUpperCase()}</span>
-                    <button class="copy-btn" onclick="copyCodeText('${codeId}')">📋 نسخ الكود</button>
+                    <div>
+                        ${runBtn}
+                        <button class="copy-btn" onclick="copyCodeText('${codeId}')">📋 نسخ الكود</button>
+                    </div>
                 </div>
                 <pre class="code-body" id="${codeId}">${escapedCode}</pre>
             </div>`;
@@ -3384,6 +3521,25 @@ def ai_assistant_page():
         formatted = formatted.replace(/\\n/g, '<br>');
 
         return formatted;
+    }
+
+    function launch3dPreview(codeElementId) {
+        const el = document.getElementById(codeElementId);
+        if (!el) return;
+        const code = el.innerText;
+
+        const modal = document.getElementById('vrPreviewModal');
+        const frame = document.getElementById('vrPreviewFrame');
+        
+        modal.style.display = 'flex';
+        frame.srcdoc = code;
+    }
+
+    function closeVrPreview() {
+        const modal = document.getElementById('vrPreviewModal');
+        const frame = document.getElementById('vrPreviewFrame');
+        modal.style.display = 'none';
+        frame.srcdoc = '';
     }
 
     function copyCodeText(elementId) {
