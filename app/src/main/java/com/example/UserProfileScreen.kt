@@ -161,6 +161,7 @@ private fun AuthenticatedProfileState(
 
     // Editable form fields
     var editDisplayName by remember { mutableStateOf("") }
+    var editPhotoUrl by remember { mutableStateOf("") }
     var editPhone by remember { mutableStateOf("") }
     var editBio by remember { mutableStateOf("") }
 
@@ -177,6 +178,7 @@ private fun AuthenticatedProfileState(
             profileState = current
             if (!isEditing) {
                 editDisplayName = current.displayName.ifBlank { user.displayName ?: "" }
+                editPhotoUrl = current.photoUrl.ifBlank { user.photoUrl?.toString() ?: "" }
                 editPhone = current.phone
                 editBio = current.bio
             }
@@ -354,14 +356,22 @@ private fun AuthenticatedProfileState(
                         fontWeight = FontWeight.Bold
                     )
 
-                    IconButton(
+                    OutlinedButton(
                         onClick = { isEditing = !isEditing },
-                        modifier = Modifier.testTag("edit_profile_button")
+                        modifier = Modifier.testTag("edit_profile_button"),
+                        shape = RoundedCornerShape(10.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Icon(
                             imageVector = if (isEditing) Icons.Default.Close else Icons.Default.Edit,
-                            contentDescription = if (isEditing) "إلغاء التعديل" else "تعديل البيانات",
-                            tint = MaterialTheme.colorScheme.primary
+                            contentDescription = if (isEditing) "إلغاء التعديل" else "تعديل الملف الشخصي",
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = if (isEditing) "إلغاء" else "تعديل الملف الشخصي",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
@@ -374,7 +384,21 @@ private fun AuthenticatedProfileState(
                         label = { Text("الاسم الكامل") },
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("edit_name_input"),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = editPhotoUrl,
+                        onValueChange = { editPhotoUrl = it },
+                        label = { Text("رابط صورة الملف الشخصي (Image URL)") },
+                        leadingIcon = { Icon(Icons.Default.Image, contentDescription = null) },
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("edit_photo_url_input"),
                         shape = RoundedCornerShape(12.dp)
                     )
 
@@ -404,23 +428,21 @@ private fun AuthenticatedProfileState(
                         onClick = {
                             coroutineScope.launch {
                                 isSaving = true
-                                val updatedProfile = displayProfile.copy(
+                                val result = repository.updateProfile(
                                     uid = user.uid,
                                     displayName = editDisplayName,
-                                    email = user.email ?: displayProfile.email,
+                                    photoUrl = editPhotoUrl,
                                     phone = editPhone,
-                                    bio = editBio,
-                                    updatedAt = System.currentTimeMillis()
+                                    bio = editBio
                                 )
-                                val result = repository.saveUserProfile(updatedProfile)
                                 isSaving = false
                                 if (result.isSuccess) {
                                     isEditing = false
-                                    Toast.makeText(context, "تم حفظ بيانات الملف بنجاح!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "تم تحديث الملف الشخصي بنجاح!", Toast.LENGTH_SHORT).show()
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        "فشل الحفظ: ${result.exceptionOrNull()?.localizedMessage}",
+                                        "فشل التحديث: ${result.exceptionOrNull()?.localizedMessage}",
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
@@ -442,7 +464,7 @@ private fun AuthenticatedProfileState(
                         } else {
                             Icon(Icons.Default.Save, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("حفظ التغييرات", fontWeight = FontWeight.Bold)
+                            Text("حفظ التحديثات", fontWeight = FontWeight.Bold)
                         }
                     }
                 } else {
