@@ -53,7 +53,8 @@ enum class NavigationTab(val label: String, val icon: ImageVector, val tag: Stri
     STORES("المتاجر", Icons.Outlined.Storefront, "nav_stores"),
     SHORTS("رفيق شورتس", Icons.Outlined.VideoLibrary, "nav_shorts"),
     WEBSITES("المواقع", Icons.Outlined.Web, "nav_websites"),
-    SOCIAL("الشبكة", Icons.Outlined.Share, "nav_social")
+    SOCIAL("الشبكة", Icons.Outlined.Share, "nav_social"),
+    PROFILE("الملف الشخصي", Icons.Outlined.Person, "nav_profile")
 }
 
 data class RepoFileItem(val name: String, val type: String, val size: String, val description: String)
@@ -260,8 +261,8 @@ fun RafeeqApp() {
             // Header stats
             StatsHeaderSummary(selectedTab)
 
-            // Search filter box (if not in shorts mode)
-            if (selectedTab != NavigationTab.SHORTS) {
+            // Search filter box (if not in shorts mode or profile mode)
+            if (selectedTab != NavigationTab.SHORTS && selectedTab != NavigationTab.PROFILE) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
@@ -287,7 +288,7 @@ fun RafeeqApp() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = if (selectedTab == NavigationTab.SHORTS) 0.dp else 16.dp)
+                    .padding(horizontal = if (selectedTab == NavigationTab.SHORTS || selectedTab == NavigationTab.PROFILE) 0.dp else 16.dp)
             ) {
                 when (selectedTab) {
                     NavigationTab.SHORTS -> ShortsSection()
@@ -295,6 +296,7 @@ fun RafeeqApp() {
                     NavigationTab.STORES -> StoresSection(searchQuery)
                     NavigationTab.WEBSITES -> WebsitesSection(searchQuery)
                     NavigationTab.SOCIAL -> SocialSection(searchQuery)
+                    NavigationTab.PROFILE -> UserProfileScreen(onOpenAuthDialog = { showAuthDialog = true })
                 }
             }
         }
