@@ -20,9 +20,7 @@ CORS(app)
 # Database Configuration
 raw_db_url = os.getenv("DATABASE_URL", "sqlite:///rafeeq_ecosystem.db")
 if raw_db_url.startswith("postgres://"):
-    raw_db_url = raw_db_url.replace("postgres://", "postgresql+pg8000://", 1)
-elif raw_db_url.startswith("postgresql://") and "+pg8000" not in raw_db_url and "+psycopg2" not in raw_db_url:
-    raw_db_url = raw_db_url.replace("postgresql://", "postgresql+pg8000://", 1)
+    raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = raw_db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -638,7 +636,12 @@ def render_layout(title, content, active_page=""):
 
 # --- WEB ROUTES ---
 
-@app.route("/", methods=["GET"])
+@app.route("/health", methods=["GET"])
+@app.route("/healthz", methods=["GET"])
+def health_check():
+    return jsonify({"status": "ok", "service": "rafeeq-ecosystem"}), 200
+
+@app.route("/", methods=["GET", "HEAD"])
 def index():
     if "user_email" in session:
         return redirect("/dashboard")
