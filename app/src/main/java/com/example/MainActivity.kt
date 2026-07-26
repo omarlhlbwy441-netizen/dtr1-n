@@ -118,6 +118,20 @@ data class WalletTransaction(
 fun RafeeqApp() {
     var selectedTab by remember { mutableStateOf(NavigationTab.SHORTS) }
     var searchQuery by remember { mutableStateOf("") }
+    var showAuthDialog by remember { mutableStateOf(false) }
+
+    val firebaseAuth = remember { com.google.firebase.auth.FirebaseAuth.getInstance() }
+    var currentUser by remember { mutableStateOf(firebaseAuth.currentUser) }
+
+    DisposableEffect(firebaseAuth) {
+        val listener = com.google.firebase.auth.FirebaseAuth.AuthStateListener { auth ->
+            currentUser = auth.currentUser
+        }
+        firebaseAuth.addAuthStateListener(listener)
+        onDispose {
+            firebaseAuth.removeAuthStateListener(listener)
+        }
+    }
 
     val gradientBrush = Brush.horizontalGradient(
         colors = listOf(PrimaryBlue, SecondaryIndigo)
@@ -151,7 +165,7 @@ fun RafeeqApp() {
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "v3.2.0 • Live Stream, VIP & Affiliate Ready",
+                                text = "v3.2.0 • Live Stream, VIP & Auth Ready",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -159,6 +173,37 @@ fun RafeeqApp() {
                     }
                 },
                 actions = {
+                    // Account / Auth Button
+                    IconButton(
+                        onClick = { showAuthDialog = true },
+                        modifier = Modifier
+                            .testTag("account_button")
+                    ) {
+                        if (currentUser != null) {
+                            Box(
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(CircleShape)
+                                    .background(PrimaryBlue),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = (currentUser?.displayName?.firstOrNull() ?: currentUser?.email?.firstOrNull() ?: 'U').uppercaseChar().toString(),
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = "تسجيل الدخول / الحساب",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+
                     Surface(
                         shape = RoundedCornerShape(12.dp),
                         color = AccentTeal.copy(alpha = 0.15f),
@@ -253,6 +298,10 @@ fun RafeeqApp() {
                 }
             }
         }
+    }
+
+    if (showAuthDialog) {
+        AuthDialog(onDismissRequest = { showAuthDialog = false })
     }
 }
 
