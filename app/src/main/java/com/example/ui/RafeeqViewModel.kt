@@ -1,7 +1,11 @@
 package com.example.ui
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.AppDatabase
+import com.example.data.TravelBookingEntity
+import com.example.data.TravelBookingRepository
 import com.example.ui.model.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class RafeeqUiState(
-    val selectedTab: Int = 0, // 0: Shorts, 1: Live & Auctions, 2: Wallet & Payouts, 3: VIP Club
+    val selectedTab: Int = 0, // 0: Shorts, 1: Live & Auctions, 2: Wallet, 3: VIP, 4: Travel Bookings
     val selectedBottomNav: Int = 2, // 0: Inventory, 1: Stores, 2: Shorts Feed, 3: Sites/Kernel, 4: Network
     val totalEarningsSar: Double = 4250.0,
     val totalInteractions: String = "182.4K",
@@ -77,6 +81,7 @@ data class RafeeqUiState(
         WalletTransaction("t2", "مزايدة ناجحة", 350.0, "2026-07-24 18:10", "مكتمل"),
         WalletTransaction("t3", "سحب إلى STC Pay", -500.0, "2026-07-23 09:15", "معالج")
     ),
+    val savedTravelBookings: List<TravelBookingEntity> = emptyList(),
     val isAiAssistantOpen: Boolean = false,
     val aiMessages: List<AiChatMessage> = listOf(
         AiChatMessage("أهلاً بك في رفيق الذكي! كيف يمكنني مساعدتك اليوم في إدارة مبيعاتك وعمولاتك؟", isFromUser = false)
@@ -84,9 +89,41 @@ data class RafeeqUiState(
     val userNotificationMessage: String? = null
 )
 
-class RafeeqViewModel : ViewModel() {
+class RafeeqViewModel(application: Application) : AndroidViewModel(application) {
+    private val travelRepository: TravelBookingRepository
+
     private val _uiState = MutableStateFlow(RafeeqUiState())
     val uiState: StateFlow<RafeeqUiState> = _uiState.asStateFlow()
+
+    init {
+        val database = AppDatabase.getDatabase(application)
+        travelRepository = TravelBookingRepository(database.travelBookingDao())
+
+        // Collect Room Database Flow reactively
+        viewModelScope.launch {
+            travelRepository.allBookings.collect { bookings ->
+                _uiState.update { it.copy(savedTravelBookings = bookings) }
+            }
+        }
+    }
+
+    fun saveTravelBooking(booking: TravelBookingEntity) {
+        viewModelScope.launch {
+            travelRepository.saveBooking(booking)
+            _uiState.update {
+                it.copy(userNotificationMessage = "تم حفظ الحجز بنجاح في قاعدة البيانات Room 💾!")
+            }
+        }
+    }
+
+    fun deleteTravelBooking(id: Long) {
+        viewModelScope.launch {
+            travelRepository.deleteBooking(id)
+            _uiState.update {
+                it.copy(userNotificationMessage = "تم حذف الحجز من قاعدة البيانات Room.")
+            }
+        }
+    }
 
     fun selectTopTab(tabIndex: Int) {
         _uiState.update { it.copy(selectedTab = tabIndex) }
@@ -158,16 +195,17 @@ class RafeeqViewModel : ViewModel() {
             state.copy(aiMessages = state.aiMessages + userMsg)
         }
         viewModelScope.launch {
-            // Generate simulated intelligent responses in Arabic
             val replyText = when {
                 prompt.contains("عمول") || prompt.contains("أرباح") ->
                     "إجمالي أرباحك الحالية هو 4,250 SAR. يمكنك زيادة نسبة عمولتك إلى 25% بالترقية في نادي VIP صناع المحتوى."
                 prompt.contains("مزاد") || prompt.contains("بث") ->
                     "المزاد النشط الآن على ساعة الرفيق الملكية وصل إلى ${_uiState.value.liveAuctions.firstOrNull()?.currentBidSar ?: 2850} SAR. يُنصح بزيادة المزايدة في الدقائق الأخيرة."
+                prompt.contains("حجز") || prompt.contains("سفر") || prompt.contains("طيران") ->
+                    "تم توفير نظام حجوزات وكالة الذئب الرقمي! يمكنك استخدام نموذج BookingForm لحفظ بيانات رحلاتك جوياً، برياً، وبحرياً في قاعدة بيانات Room المحلية مع حماية الضمان المالي."
                 prompt.contains("سحب") || prompt.contains("محفظ") ->
                     "رصيدك المتاح للسحب الفوري هو ${_uiState.value.walletBalanceSar} SAR. طرق السحب المتاحة: STC Pay، تحويل بنكي، وApple Pay."
                 else ->
-                    "منظومة رفيق v3.2.0 تعمل بكفاءة عالية. لقد قمت بتحليل تفاعلات الشورتس الخاصة بك وهناك ارتفاع بنسبة 32% في التفاعل المباشر!"
+                    "منظومة رفيق v3.2.0 تعمل بكفاءة عالية. لقد قمت بتحليل تفاعلات الشورتس والحجوزات الخاصة بك وهناك ارتفاع بنسبة 32% في التفاعل المباشر!"
             }
             val botMsg = AiChatMessage(replyText, isFromUser = false)
             _uiState.update { state ->

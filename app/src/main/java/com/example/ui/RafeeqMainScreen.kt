@@ -69,6 +69,11 @@ fun RafeeqMainScreen(viewModel: RafeeqViewModel) {
                     1 -> AuctionsView(uiState = uiState, viewModel = viewModel)
                     2 -> WalletView(uiState = uiState, viewModel = viewModel)
                     3 -> VipSlotsView(uiState = uiState)
+                    4 -> BookingForm(
+                        savedBookings = uiState.savedTravelBookings,
+                        onSaveBooking = { booking -> viewModel.saveTravelBooking(booking) },
+                        onDeleteBooking = { id -> viewModel.deleteTravelBooking(id) }
+                    )
                 }
             }
 

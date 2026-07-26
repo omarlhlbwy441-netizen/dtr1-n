@@ -283,7 +283,8 @@ fun ActionTabsBar(
         Pair("رفيق شورتس", Icons.Default.PlayArrow),
         Pair("البث والمزاد 🔥", Icons.Default.Whatshot),
         Pair("المحفظة والسحب 💰", Icons.Default.AccountBalance),
-        Pair("نادي VIP 👑", Icons.Default.WorkspacePremium)
+        Pair("نادي VIP 👑", Icons.Default.WorkspacePremium),
+        Pair("حجوزات السفر ✈️", Icons.Default.FlightTakeoff)
     )
 
     ScrollableTabRow(
