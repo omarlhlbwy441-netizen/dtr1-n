@@ -8,51 +8,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 /**
- * Data model representing a User Profile in Firestore
- */
-data class UserProfile(
-    val uid: String = "",
-    val displayName: String = "",
-    val email: String = "",
-    val photoUrl: String = "",
-    val phone: String = "",
-    val bio: String = "",
-    val role: String = "USER", // "USER", "MERCHANT", "VIP"
-    val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
-) {
-    fun toMap(): Map<String, Any> {
-        return mapOf(
-            "uid" to uid,
-            "displayName" to displayName,
-            "email" to email,
-            "photoUrl" to photoUrl,
-            "phone" to phone,
-            "bio" to bio,
-            "role" to role,
-            "createdAt" to createdAt,
-            "updatedAt" to System.currentTimeMillis()
-        )
-    }
-
-    companion object {
-        fun fromMap(map: Map<String, Any?>): UserProfile {
-            return UserProfile(
-                uid = map["uid"] as? String ?: "",
-                displayName = map["displayName"] as? String ?: "",
-                email = map["email"] as? String ?: "",
-                photoUrl = map["photoUrl"] as? String ?: "",
-                phone = map["phone"] as? String ?: "",
-                bio = map["bio"] as? String ?: "",
-                role = map["role"] as? String ?: "USER",
-                createdAt = (map["createdAt"] as? Long) ?: System.currentTimeMillis(),
-                updatedAt = (map["updatedAt"] as? Long) ?: System.currentTimeMillis()
-            )
-        }
-    }
-}
-
-/**
  * Repository for saving and retrieving user profile data from Cloud Firestore
  */
 class UserProfileRepository(
