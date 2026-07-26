@@ -16,24 +16,28 @@ CORS(app)
 # Database Configuration
 raw_db_url = os.getenv("DATABASE_URL", "sqlite:///rafeeq_ecosystem.db")
 if raw_db_url.startswith("postgres://"):
-    raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
+    raw_db_url = raw_db_url.replace("postgres://", "postgresql+pg8000://", 1)
+elif raw_db_url.startswith("postgresql://") and "+pg8000" not in raw_db_url and "+psycopg2" not in raw_db_url:
+    raw_db_url = raw_db_url.replace("postgresql://", "postgresql+pg8000://", 1)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = raw_db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True,
-    "pool_recycle": 300,
-    "connect_args": {"connect_timeout": 3}
-} if "postgresql://" in raw_db_url else {}
+    "pool_recycle": 300
+} if "postgresql" in raw_db_url else {}
 app.config["SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "rafeeq-secret-key-3.2.0")
 
+db = SQLAlchemy()
+
 try:
-    db = SQLAlchemy(app)
+    db.init_app(app)
 except Exception as e:
     logger.warning(f"Primary database init failed ({e}), falling back to SQLite.")
+    app.extensions.pop("sqlalchemy", None)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///rafeeq_ecosystem.db"
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {}
-    db = SQLAlchemy(app)
+    db.init_app(app)
 
 db_initialized = False
 
