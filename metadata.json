@@ -1,6 +1,6 @@
 {
-  "name": "Rafeeq",
-  "description": "منظومة رفيق الشاملة (v3.2.0) - رفيق الذكي، شورتس وبث مباشر، مزادات حية، تسويق بالعمولة، محفظة أرباح ونادي VIP.",
+  "name": "Rafeeq Store System",
+  "description": "منظومة رفيق الشاملة (v3.2.0) - شورتس وبث مباشر، مزادات حية، تسويق بالعمولة، محفظة أرباح وسحب متعدد، ونادي VIP لصناع المحتوى.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

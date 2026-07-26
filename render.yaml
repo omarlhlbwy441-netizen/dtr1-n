@@ -7,12 +7,12 @@ databases:
 
 services:
   - type: web
-    name: dtr1-n
+    name: dtr1-n-1
     env: python
     region: oregon
     plan: free
     buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
-    startCommand: "gunicorn -c gunicorn.conf.py main:app"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 main:app"
     autoDeploy: true
     envVars:
       - key: PYTHON_VERSION
@@ -28,6 +28,6 @@ services:
           name: Omarlhlbwy7
           property: connectionString
       - key: RENDER_SERVICE_NAME
-        value: dtr1-n
+        value: dtr1-n-1
       - key: GEMINI_API_KEY
         sync: false
